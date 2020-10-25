@@ -19,22 +19,22 @@ const validateJWT = ( req = request, res = response, next ) => {
     next();
 };
 
-const validateAdmin = ( req = request, res = response, next ) => {
+const validateAdmin = async ( req = request, res = response, next ) => {
     let payload = {};
     if( !req.headers.authorization ) {
         return res.send( message( 400, false, 'Falta token' ) );
     }
     const userToken = req.headers.authorization.replace('Bearer ','');
     try {
-        payload = jwt.encode( userToken, seed );
+        payload = await jwt.decode( userToken, seed );
+        if( payload.user.rol !== 'ADMIN_ROL' ){
+            return res.send( message( 400, false, 'Sin permiso' ) );
+        }
+        next();
     }catch( error ) {
         console.log( error );
         return res.send( message( 400, false, 'Token incorrecto' ) );
     }
-    if( payload.rol === 'ADMIN_ROL' ){
-        next();
-    }
-    return res.send( message( 400, false, 'Sin permiso' ) );
 };
 
 module.exports = {
