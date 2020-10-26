@@ -10,7 +10,7 @@ const save = async ( data ) => {
         return usuario.toJSON();
     } catch ( error ) {
         console.log( error );
-        return { erro: true };
+        return { error: true };
     }
 };
 
