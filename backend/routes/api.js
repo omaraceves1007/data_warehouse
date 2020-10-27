@@ -11,6 +11,7 @@ const loginRoutes = require( './login.routes' );
 const regionRoutes = require( './region.routes' );
 const countryRoutes = require( './country.routes' );
 const cityRoutes = require( './city.routes' );
+const companyRoutes = require( './company.routes' );
 
 // use routes
 router.use( '/users', usersRoutes );
@@ -18,6 +19,7 @@ router.use( '/login', loginRoutes );
 router.use( '/regions', regionRoutes );
 router.use( '/countries', countryRoutes );
 router.use( '/cities', cityRoutes );
+router.use( '/companies', companyRoutes );
 //export router
 
 module.exports = router;

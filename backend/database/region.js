@@ -13,7 +13,7 @@ const save = async ( data ) => {
 
 const findAll = async () => {
     try {
-        const regions = await Region.find( {}, 'nombre' );
+        const regions = await Region.find( {} );
         return regions;
     } catch( error ){
         console.log( error );

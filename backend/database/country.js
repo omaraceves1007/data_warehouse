@@ -13,7 +13,7 @@ const save = async ( data ) => {
 
 const findAll = async () => {
     try {
-        const countries = await Country.find( {}, 'nombre' )
+        const countries = await Country.find( {} )
                         .populate( 'region', 'nombre id' )
                         .exec();
         return countries;

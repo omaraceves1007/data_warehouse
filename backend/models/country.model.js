@@ -16,8 +16,11 @@ const CountrySchema = Schema( {
 CountrySchema.method('toJSON', function() {
     const { __v, _id, region, ...object } = this.toObject();
     object.id = _id;
-    const reg = { id: region._id, nombre: region.nombre };
-    object.region = reg;
+    if ( region._id ) {
+        const reg = { id: region._id, nombre: region.nombre };
+        object.region = reg;
+    }
+    object.region = region;
     return object;
 });
 
