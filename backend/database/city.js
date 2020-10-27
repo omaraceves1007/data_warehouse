@@ -1,10 +1,10 @@
-const Country = require( '../models/country.model' );
+const City = require( '../models/city.model' );
 
 const save = async ( data ) => {
     try {
-        const country = new Country( data );
-        await country.save();
-        return country.toJSON();
+        const city = new City( data );
+        await city.save();
+        return city.toJSON();
     } catch( error ){
         console.log( error );
         return { error: true };
@@ -13,10 +13,11 @@ const save = async ( data ) => {
 
 const findAll = async () => {
     try {
-        const countrys = await Country.find( {}, 'nombre' )
+        const citys = await City.find( {}, 'nombre' )
                         .populate( 'region', 'nombre id' )
+                        .populate( 'country', 'nombre id' )
                         .exec();
-        return countrys;
+        return citys;
     } catch( error ){
         console.log( error );
         return { error: true };
@@ -25,10 +26,11 @@ const findAll = async () => {
 
 const findById = async ( id ) => {
     try {
-        const country = await (await Country.findById( id ))
+        const city = await (await City.findById( id ))
                         .populate( 'region', 'nombre id' )
+                        .populate( 'country', 'nombre id' )
                         .execPopulate();
-        return country;
+        return city;
     } catch( error ){
         console.log( error );
         return { error: true };
@@ -37,8 +39,8 @@ const findById = async ( id ) => {
 
 const findOne = async ( param ) => {
     try {
-        const country = await Country.findOne({ param });
-        return country;
+        const city = await City.findOne({ param });
+        return city;
     } catch ( error ){
         console.log( error );
         return { error: true };
@@ -47,8 +49,8 @@ const findOne = async ( param ) => {
 
 const updateC = async ( id, campos ) => {
     try{
-        const updatedcountry = await Country.findByIdAndUpdate( id, campos, { new: true } );
-        return updatedcountry;
+        const updatedcity = await City.findByIdAndUpdate( id, campos, { new: true } );
+        return updatedcity;
     } catch ( error ){
         console.log( error );
         return { error: true };
@@ -57,7 +59,7 @@ const updateC = async ( id, campos ) => {
 
 const deleteC = async( id ) => {
     try{
-        await Country.findByIdAndDelete( id );
+        await City.findByIdAndDelete( id );
         return true;
     } catch ( error ){
         console.log( error );

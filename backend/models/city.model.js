@@ -11,7 +11,7 @@ const CitySchema = Schema( {
         ref: 'Region',
         required: true
     },
-    pais: {
+    country: {
         type: Schema.Types.ObjectId,
         ref: 'Country',
         required: true
