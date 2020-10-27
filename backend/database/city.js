@@ -13,11 +13,11 @@ const save = async ( data ) => {
 
 const findAll = async () => {
     try {
-        const citys = await City.find( {}, 'nombre' )
+        const cities = await City.find( {}, 'nombre' )
                         .populate( 'region', 'nombre id' )
                         .populate( 'country', 'nombre id' )
                         .exec();
-        return citys;
+        return cities;
     } catch( error ){
         console.log( error );
         return { error: true };

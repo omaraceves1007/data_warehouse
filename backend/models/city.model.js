@@ -19,8 +19,12 @@ const CitySchema = Schema( {
 } );
 
 CitySchema.method('toJSON', function() {
-    const { __v, _id, ...object } = this.toObject();
+    const { __v, _id, region, country, ...object } = this.toObject();
     object.id = _id;
+    const reg = { id: region._id, nombre: region.nombre };
+    const cou = { id: country._id, nombre: country.nombre };
+    object.region = reg;
+    object.country = cou;
     return object;
 });
 

@@ -10,9 +10,9 @@ const newCity = async ( data ) => {
 };
 
 const findCities = async () => {
-    const citys = await findAll();
-    if( !citys.error ) {
-        return message( 200, true, citys );
+    const cities = await findAll();
+    if( !cities.error ) {
+        return message( 200, true, cities );
     }
     return message( 500, false, 'Error en operación' );
 };

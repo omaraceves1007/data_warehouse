@@ -10,9 +10,9 @@ const newCountry = async ( data ) => {
 };
 
 const findCountries = async () => {
-    const countrys = await findAll();
-    if( !countrys.error ) {
-        return message( 200, true, countrys );
+    const countries = await findAll();
+    if( !countries.error ) {
+        return message( 200, true, countries );
     }
     return message( 500, false, 'Error en operación' );
 };
