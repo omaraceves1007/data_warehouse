@@ -12,6 +12,7 @@ const regionRoutes = require( './region.routes' );
 const countryRoutes = require( './country.routes' );
 const cityRoutes = require( './city.routes' );
 const companyRoutes = require( './company.routes' );
+const contactRoutes = require( './contact.routes' );
 
 // use routes
 router.use( '/users', usersRoutes );
@@ -20,6 +21,7 @@ router.use( '/regions', regionRoutes );
 router.use( '/countries', countryRoutes );
 router.use( '/cities', cityRoutes );
 router.use( '/companies', companyRoutes );
+router.use( '/contacts', contactRoutes );
 //export router
 
 module.exports = router;

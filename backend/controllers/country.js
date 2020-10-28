@@ -34,7 +34,7 @@ const findCountry = async ( param ) => {
 };
 
 const updateCountry = async ( id, data ) => {
-    const { email, password, ...campos } = data;
+    const { ...campos } = data;
     const exist = await findById( id );
     if ( !exist.error ) {
         const updatedCountry = await updateC( id, campos );

@@ -34,7 +34,7 @@ const findRegion = async ( param ) => {
 };
 
 const updateRegion = async ( id, data ) => {
-    const { email, password, ...campos } = data;
+    const { ...campos } = data;
     const exist = await findById( id );
     if ( !exist.error ) {
         const updatedRegion = await updateR( id, campos );

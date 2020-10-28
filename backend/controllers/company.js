@@ -34,7 +34,7 @@ const findCompany = async ( param ) => {
 };
 
 const updateCompany = async ( id, data ) => {
-    const { email, password, ...campos } = data;
+    const { ...campos } = data;
     const exist = await findById( id );
     if ( !exist.error ) {
         const updatedCompany = await updateC( id, campos );
