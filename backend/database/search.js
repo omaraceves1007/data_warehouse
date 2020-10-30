@@ -27,6 +27,28 @@ const findExp = async ( exp ) => {
     }
 };
 
+const findContacts = async ( query, options ) => {
+    const skip = parseInt( options.skip, 10 ),
+        limit = parseInt( options.limit, 10 ),
+        sort = options.sort,
+        way = parseInt( options.way, 10 ),
+        sorting = {};
+    sorting[sort] = way;
+    try{
+        const contacts = await Contact.find( query )
+                            .populate( 'company', 'nombre' )
+                            .populate( 'country', 'nombre' )
+                            .populate( 'region', 'nombre' )
+                            .skip( skip ).limit( limit ).sort( sorting )
+                            .exec();
+        return contacts;
+    } catch( error ) {
+        console.log( error );
+        return { error: true };
+    }
+};
+
 module.exports = {
-    findExp
+    findExp,
+    findContacts
 };
