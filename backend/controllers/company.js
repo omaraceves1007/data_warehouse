@@ -9,8 +9,8 @@ const newCompany = async ( data ) => {
     return message( 500, false, 'Error en operación' );
 };
 
-const findCities = async () => {
-    const companies = await findAll();
+const findCities = async ( query ) => {
+    const companies = await findAll( query );
     if( !companies.error ) {
         return message( 200, true, companies );
     }

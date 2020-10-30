@@ -4,7 +4,8 @@ const { newCompany, findCities, findCompanyById, updateCompany, deleteCompany } 
 const router = Router();
 
 router.get( '/', [ validateJWT ], async ( req = request , res = response ) => {
-    const resp = await findCities();
+    const query = req.query;
+    const resp = await findCities( query );
     res.send( resp );
 } );
 

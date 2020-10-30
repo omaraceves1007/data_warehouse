@@ -11,7 +11,13 @@ const save = async ( data ) => {
     }
 };
 
-const findAll = async () => {
+const findAll = async ( query ) => {
+    const skip = parseInt( query.skip, 10 ),
+        limit = parseInt( query.limit, 10 ),
+        sort = query.sort,
+        way = parseInt( query.way, 10 ),
+        sorting = {};
+    sorting[sort] = way;
     try {
         const contacts = await Contact.find( {} )
                         .populate( {
@@ -23,6 +29,7 @@ const findAll = async () => {
                             }
                         } )
                         .populate( 'company' )
+                        .skip( skip ).limit( limit ).sort( sorting )
                         .exec();
         return contacts;
     } catch( error ){

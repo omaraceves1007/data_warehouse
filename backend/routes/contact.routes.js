@@ -4,7 +4,8 @@ const { newContact, findContacts, findContactById, updateContact, deleteContact 
 const router = Router();
 
 router.get( '/', [ validateJWT ], async ( req = request , res = response ) => {
-    const resp = await findContacts();
+    const query = req.query;
+    const resp = await findContacts( query );
     res.send( resp );
 } );
 

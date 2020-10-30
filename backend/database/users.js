@@ -14,9 +14,16 @@ const save = async ( data ) => {
     }
 };
 
-const findAll = async () => {
+const findAll = async ( query ) => {
+    const skip = parseInt( query.skip, 10 ),
+        limit = parseInt( query.limit, 10 ),
+        sort = query.sort,
+        way = parseInt( query.way, 10 ),
+        sorting = {};
+    sorting[sort] = way;
     try {
-        const users = await User.find({}, 'nombre apellido email img role' );
+        const users = await User.find({}, 'nombre apellido email img role' )
+                                .skip( skip ).limit( limit ).sort( sorting );
         return users;
     } catch( error ) {
         console.log( error );

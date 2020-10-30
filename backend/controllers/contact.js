@@ -9,8 +9,8 @@ const newContact = async ( data ) => {
     return message( 500, false, 'Error en operación' );
 };
 
-const findContacts = async () => {
-    const contacts = await findAll();
+const findContacts = async ( query ) => {
+    const contacts = await findAll( query );
     if( !contacts.error ) {
         return message( 200, true, contacts );
     }

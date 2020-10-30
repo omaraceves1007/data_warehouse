@@ -6,7 +6,8 @@ const { userNotNull } = require( '../middleware/validators' );
 const router = Router();
 
 router.get( '/', [ validateJWT, validateAdmin ], async ( req = request , res = response ) => {
-    const resp = await findUsers();
+    const query = req.query;
+    const resp = await findUsers( query );
     res.send( resp );
 });
 

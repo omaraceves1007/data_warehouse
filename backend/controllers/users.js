@@ -9,8 +9,8 @@ const newUser =  async( data ) => {
     return message( 500, false, 'Error en operación' );
 };
 
-const findUsers = async() => {
-    const users = await findAll();
+const findUsers = async( query ) => {
+    const users = await findAll( query );
     if( !users.error ){
         return message ( 200, true, users );
     }
