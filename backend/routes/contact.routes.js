@@ -1,6 +1,7 @@
 const { Router, response, request } = require ( 'express' );
 const { validateJWT } = require( '../middleware/jwt' );
 const { newContact, findContacts, findContactById, updateContact, deleteContact } = require( '../controllers/contact' );
+const { searchExp } = require( '../controllers/search' );
 const router = Router();
 
 router.get( '/', [ validateJWT ], async ( req = request , res = response ) => {
@@ -31,6 +32,12 @@ router.put( '/:id', [ validateJWT ], async ( req = request , res = response ) =>
 router.delete( '/:id', [ validateJWT ], async ( req = request , res = response ) => {
     const id = req.params.id;
     const resp = await deleteContact( id );
+    res.send( resp );
+} );
+
+router.get( '/search/:search', [ validateJWT ], async ( req = request , res = response ) => {
+    const search = req.params.search;
+    const resp = await searchExp( search );
     res.send( resp );
 } );
 

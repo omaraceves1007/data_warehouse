@@ -20,15 +20,9 @@ const findAll = async ( query ) => {
     sorting[sort] = way;
     try {
         const contacts = await Contact.find( {} )
-                        .populate( {
-                            path: 'city',
-                            select: 'nombre id country',
-                            populate: { 
-                                path: 'country',
-                                populate: { path: 'region' }
-                            }
-                        } )
-                        .populate( 'company' )
+                        .populate( 'company', 'nombre' )
+                        .populate( 'country', 'nombre' )
+                        .populate( 'region', 'nombre' )
                         .skip( skip ).limit( limit ).sort( sorting )
                         .exec();
         return contacts;
@@ -41,15 +35,9 @@ const findAll = async ( query ) => {
 const findById = async ( id ) => {
     try {
         const contact = await Contact.findById( id )
-                        .populate( {
-                            path: 'city',
-                            select: 'nombre id country',
-                            populate: { 
-                                path: 'country',
-                                populate: { path: 'region' }
-                            }
-                        } )
-                        .populate( 'company' )
+                        .populate( 'company', 'nombre' )
+                        .populate( 'country', 'nombre' )
+                        .populate( 'region', 'nombre' )
                         .exec();
         return contact;
     } catch( error ){
@@ -87,7 +75,6 @@ const deleteC = async( id ) => {
         return { error: true };
     }
 }
-
 
 module.exports = {
     save,

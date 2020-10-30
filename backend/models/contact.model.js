@@ -54,21 +54,21 @@ const ContactSchema = Schema( {
 } );
 
 ContactSchema.method('toJSON', function() {
-    const { __v, _id, region, country, city, company, ...object } = this.toObject();
+    const { __v, _id,/*  region, country, city, company, */ ...object } = this.toObject();
     object.id = _id;
-    if( city.country && company.nombre ) {
-        const reg = { id: city.country.region._id, nombre: city.country.region.nombre };
-        const cou = { id: city.country._id, nombre: city.country.nombre, region: reg };
-        const cit = { id: city._id, nombre: city.nombre, country: cou };
-        const com = { id: company._id, nombre: company.nombre };
-        object.compay = com;
-        object.city = cit;
-    } else {
-        object.company = company;
-        object.region = region;
-        object.country = country;
-        object.city = city;
-    }
+    // if( city.country && company.nombre ) {
+    //     const reg = { id: city.country.region._id, nombre: city.country.region.nombre };
+    //     const cou = { id: city.country._id, nombre: city.country.nombre, region: reg };
+    //     const cit = { id: city._id, nombre: city.nombre, country: cou };
+    //     const com = { id: company._id, nombre: company.nombre };
+    //     object.compay = com;
+    //     object.city = cit;
+    // } else {
+    //     object.company = company;
+    //     object.region = region;
+    //     object.country = country;
+    //     object.city = city;
+    // }
     return object;
 });
 

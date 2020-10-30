@@ -21,7 +21,7 @@ const CitySchema = Schema( {
 CitySchema.method('toJSON', function() {
     const { __v, _id, region, country, ...object } = this.toObject();
     object.id = _id;
-    if( region._id ){
+    if( region && region._id ){
         const reg = { id: region._id, nombre: region.nombre };
         const cou = { id: country._id, nombre: country.nombre };
         object.region = reg;

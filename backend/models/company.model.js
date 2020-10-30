@@ -31,7 +31,7 @@ const CompanySchema = Schema( {
 CompanySchema.method('toJSON', function() {
     const { __v, _id, city, ...object } = this.toObject();
     object.id = _id;
-    if( city.country ) {
+    if( city && city.country ) {
         const reg = { id: city.country.region._id, nombre: city.country.region.nombre };
         const cou = { id: city.country._id, nombre: city.country.nombre, region: reg };
         const cit = { id: city._id, nombre: city.nombre, country: cou };
