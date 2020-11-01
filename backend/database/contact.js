@@ -76,11 +76,25 @@ const deleteC = async( id ) => {
     }
 }
 
+const updateIma = async ( image, id ) => {
+    try{
+        const contact = await Contact.findById( id );
+        if( !contact ) { return {error: true } };
+        contact.image = image;
+        contact.save();
+        return contact;
+    } catch ( error ){
+        console.log( error );
+        return { error: true };
+    }
+}
+
 module.exports = {
     save,
     findAll,
     findById,
     findOne,
     updateC,
-    deleteC
+    deleteC,
+    updateIma
 }

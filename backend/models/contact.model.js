@@ -1,6 +1,9 @@
 const { Schema, model }  = require( 'mongoose' );
 
 const ContactSchema = Schema( {
+    image: {
+        type: String,
+    },
     nombre: {
         type: String,
         required: true,
