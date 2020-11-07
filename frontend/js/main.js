@@ -1,15 +1,16 @@
 import { existData, getData } from './controllers/storage.js';
 import { getLogin } from './controllers/login.js';
 import { getMenu } from './controllers/menu.js';
-import { userInfo } from './dev.const.js';
+import { userInfo, setUser } from './dev.const.js';
 
 let TOKEN = '';
 
 ( () => {
     if( existData( 'token' ) ) {
         TOKEN = getData( 'token' );
-        const USUARIO = userInfo( TOKEN );
-        getMenu( USUARIO );
+        const USER = userInfo( TOKEN );
+        setUser( USER );
+        getMenu( USER );
     } else {
         getLogin();
     }

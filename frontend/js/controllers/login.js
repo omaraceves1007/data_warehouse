@@ -1,4 +1,4 @@
-import { URL, CONTENT_TYPE } from '../dev.const.js';
+import { URL, CONTENT_TYPE, setToken } from '../dev.const.js';
 import { existData, save } from '../controllers/storage.js';
 
 export const getLogin = async () => {
@@ -35,10 +35,11 @@ const login = ( data ) => {
     .catch( error => console.log( error ) );
 };
 
-const saveToken = ( res ) => {console.log(res)
+const saveToken = ( res ) => {
     if( res.ok ) {
         if( !existData( 'token' ) ) {
             save( { key: 'token', data : res.data } );
+            setToken( res.data );
         }
     }
 }; 

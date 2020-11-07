@@ -1,6 +1,11 @@
 export const URL = 'http://localhost:3000/api/';
 export const CONTENT_TYPE = { 'Content-type': 'application/x-www-form-urlencoded' } ;
-export const AUTH = { Authorization: '' } ;
+let AUTH = { Authorization: null } ;
+export const setAuth = ( auth ) => AUTH.Authorization = auth;
+export const getAuth = () => AUTH;
+let TOKEN = '';
+export const setToken = ( token ) => { console.log(token);TOKEN = token};
+export const getToken = () => TOKEN;
 export const DOCUMENT = document ;
 export const userInfo = ( token ) => {
     let base64Url = token.split( '.' )[ 1 ];
@@ -13,10 +18,12 @@ export const userInfo = ( token ) => {
     const userJson = JSON.parse( jsonPayload );
     return userJson.user;
 };
-// export const = ;
-// export const = ;
-// export const = ;
-// export const = ;
+export const APP = DOCUMENT.getElementById( 'app' );
+let USER = {};
+export const setUser = ( user ) =>{
+    USER = { ...user };
+};
+export const getUser = () => USER;
 // export const = ;
 // export const = ;
 // export const = ;
