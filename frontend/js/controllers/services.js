@@ -8,7 +8,7 @@ const setAuthorization = () => {
     }
 }
 
-const getHeaders = () => {
+export const getHeaders = () => {
     setAuthorization();
     const auth = getAuth();
     return {
@@ -21,8 +21,15 @@ export const getUsers = async ( skip = 0, limit = 5, sort = '_id', way = 1 ) => 
     const options = {
         headers: getHeaders()
     }
-    fetch( `${URL}users/?skip=${skip}&limit=${limit}&sort=${sort}&way=${way}`, options )
-        .then( res => res.json() )
-        .then( console.log )
-        .catch( console.error );
+    try{
+        const resp = await fetch( `${URL}users/?skip=${skip}&limit=${limit}&sort=${sort}&way=${way}`, options );
+        const info = await resp.json();
+        if( info.ok ){
+            return info.data;
+        }
+        return false;
+    } catch ( err ) {
+        console.error( err );
+        return false;
+    }
 };
