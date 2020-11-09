@@ -1,0 +1,17 @@
+.tabulator-cell [type="checkbox"]:not(:checked),
+.tabulator-cell [type="checkbox"]:checked,
+.tabulator-col-title [type="checkbox"]:checked,
+.tabulator-col-title [type="checkbox"]:not(:checked) {
+    position: relative;
+    opacity: 1;
+    pointer-events: all;
+}
+/* .tabulator-col-title [type="checkbox"]:checked,
+.tabulator-col-title [type="checkbox"]:not(:checked)  */
+.tabulator-col-title {
+    text-align: center;
+}
+select.tabulator-page-size {
+    width: auto;
+    height: auto;
+}
