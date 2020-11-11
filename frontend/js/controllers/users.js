@@ -111,8 +111,8 @@ const getData = ( url, config, params ) => {
 
 const respData = ( url, params, response ) =>{
     const resp = {
-        last_page: 3,
-        data: response.data
+        last_page: response.data.last_page,
+        data: response.data.users
     }
     return resp;
 };

@@ -30,7 +30,8 @@ const findAll = async ( query ) => {
                         } )
                         .skip( skip ).limit( limit ).sort( sorting )
                         .exec();
-        return companies;
+        const last = await getLastPage( limit );
+        return { last_page: last, companies };
     } catch( error ){
         console.log( error );
         return { error: true };
@@ -83,6 +84,18 @@ const deleteC = async( id ) => {
     } catch ( error ){
         console.log( error );
         return { error: true };
+    }
+}
+
+const getLastPage = async ( size ) => {
+    try {
+        const all = await Company.find({});
+        const pages = all.length / size;
+        const last = Math.ceil( pages );
+        return last;
+    } catch( error ) {
+        console.log( error );
+        return{ error: true };
     }
 }
 

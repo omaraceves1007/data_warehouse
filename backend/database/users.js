@@ -22,9 +22,10 @@ const findAll = async ( query ) => {
         sorting = {};
     sorting[sort] = way;
     try {
-        const users = await User.find({}, 'nombre apellido email img rol' )
+        const users = await User.find( {}, 'nombre apellido email img rol' )
                                 .skip( skip ).limit( limit ).sort( sorting );
-        return users;
+        const last = await getLastPage( limit );
+        return { last_page: last, users };
     } catch( error ) {
         console.log( error );
         return { error: true };
@@ -71,6 +72,17 @@ const deleteU = async( id ) => {
     }
 }
 
+const getLastPage = async ( size ) => {
+    try {
+        const all = await User.find({});
+        const pages = all.length / size;
+        const last = Math.ceil( pages );
+        return last;
+    } catch( error ) {
+        console.log( error );
+        return{ error: true };
+    }
+}
 
 module.exports = {
     save,

@@ -25,7 +25,8 @@ const findAll = async ( query ) => {
                         .populate( 'region', 'nombre' )
                         .skip( skip ).limit( limit ).sort( sorting )
                         .exec();
-        return contacts;
+        const last = await getLastPage( limit );
+        return { last_page: last, contacts };
     } catch( error ){
         console.log( error );
         return { error: true };
@@ -86,6 +87,18 @@ const updateIma = async ( image, id ) => {
     } catch ( error ){
         console.log( error );
         return { error: true };
+    }
+}
+
+const getLastPage = async ( size ) => {
+    try {
+        const all = await Contact.find({});
+        const pages = all.length / size;
+        const last = Math.ceil( pages );
+        return last;
+    } catch( error ) {
+        console.log( error );
+        return{ error: true };
     }
 }
 
