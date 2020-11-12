@@ -1,5 +1,5 @@
 import { DOCUMENT, APP, URL } from '../dev.const.js';
-import { getHeaders, getUsers } from './services.js';
+import { getHeaders, getUsers, saveUserSer } from './services.js';
 
 const container = APP;
 const URL_USER = `${URL}users/`;
@@ -11,7 +11,8 @@ export const initUsers = async () => {
     }
     addEventNew();
     initSelForm();
-    saveUser();
+    saveUserBtn();
+    changeConfirmPass();
     // const  users = await getUsers();
     const headers = await getHeaders();
     // usersTable( users );
@@ -35,22 +36,28 @@ const addEventNew = () => {
 };
 
 const addUser = () => {
-    let elems = document.querySelectorAll( '.modal' );
-    let instances = M.Modal.init( elems);
-    // alert('nuevo user')
+    const elems = document.querySelector( '.modal' );
+    M.Modal.init( elems );
 };
 
 const initSelForm = () => {
-    var elems = document.querySelectorAll( 'select' );
-    var instances = M.FormSelect.init(elems);
+    let elems = document.querySelector( 'select' );
+    let instances = M.FormSelect.init(elems);
 };
 
-const saveUser = () => {
+const saveUserBtn = () => {
     const form = DOCUMENT.getElementById( 'userForm' );
     const btnSave = DOCUMENT.getElementById( 'guardarU' );
     btnSave.onclick = () => {
         const data = new FormData( form );
-        console.log( data.get('nombre') );
+        const user = {
+            nombre : data.get('nombre'),
+            apellido : data.get('apellido'),
+            password : data.get('password'),
+            email : data.get('email'),
+            rol : data.get('rol')
+        }
+        saveUser( user );
     };
 };
 
@@ -117,6 +124,19 @@ const respData = ( url, params, response ) =>{
     return resp;
 };
 
+const saveUser = async( user ) => {
+    const elem = document.querySelector( '.modal' );
+    const modal = await M.Modal.getInstance( elem );
+    const resp = await saveUserSer( user );
+    if( resp.ok ) {
+        swal( 'Exito', `¡Usuario ${resp.data.nombre} registrado!`, 'success' );
+    } else {
+        console.error( resp );
+        swal( 'Error', '¡Error al registrar!' , 'error' );
+    }
+    modal.close();
+};
+
 const deleteUser = ( id ) => {
     alert( id );
 };
@@ -132,4 +152,27 @@ const expData = ( userList ) => {
     if( userList.length > 0 ){
         console.log ( userList );
     }
+}
+
+const changeConfirmPass = () => {
+    const change = DOCUMENT.getElementById('confirm_password');
+    change.onkeyup = () => { samePass( change ) };
+};
+
+const samePass = async ( input ) => {
+    const form = DOCUMENT.getElementById( 'userForm' );
+    const span = DOCUMENT.querySelector( 'span.helper-text' );
+    const data = new FormData( form );
+    const password = data.get( 'password' );
+    setTimeout(() => {
+        if( input.value !== password ) {
+            input.classList.remove( 'valid' );
+            span.classList.remove( 'hide' );
+            input.classList.add( 'invalid' );
+        } else {
+            input.classList.add( 'valid' );
+            span.classList.add( 'hide' );
+            input.classList.remove( 'invalid' );
+        }
+    }, 500);
 }

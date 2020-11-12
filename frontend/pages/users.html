@@ -17,11 +17,11 @@
         <div class="row">
             <form class="col s12" id="userForm">
                 <div class="row">
-                    <div class="input-field col m12">
+                    <div class="input-field col m6">
                         <input name="nombre" id="nombre" type="text" class="validate">
                         <label for="nombre">Nombre</label>
                     </div>
-                    <div class="input-field col m12">
+                    <div class="input-field col m6">
                         <input name="apellido" id="apellido" type="text" class="validate">
                         <label for="apellido">Apellido</label>
                     </div>
@@ -32,17 +32,16 @@
                     <div class="input-field col m6">
                         <input name="confirm_password" id="confirm_password" type="password" class="validate">
                         <label for="confirm_password"> Confirmar Password</label>
+                        <span class="helper-text hide" data-error="wrong" data-success="right">Password debe ser igual</span>
                     </div>
-                    <div class="input-field col s12">
+                    <div class="input-field col s6">
                         <input name="email" id="email" type="email" class="validate">
                         <label for="email">Email</label>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="input-field col m5">
+                    <div class="input-field col m6">
                         <select id="rol" name="rol">
                             <option value="" disabled selected> Selecciona un Rol</option>
-                            <option value="ADMIN_ROL">ADMINNISTRADOR</option>
+                            <option value="ADMIN_ROL">ADMINISTRADOR</option>
                             <option value="USER_ROL">USUARIO</option>
                         </select>
                         <label>Rol</label>
@@ -54,6 +53,6 @@
     </div>
     <div class="modal-footer">
         <a href="#!" class="modal-close waves-effect waves-green btn red accent-4">Cancelar</a>
-        <a href="#!" class="waves-effect waves-green btn blue accent-3" id="guardarU">Guardar</a>
+        <a href="#!" class="waves-effect waves-green btn blue accent-3" id="guardarU" >Guardar</a>
     </div>
 </div>
