@@ -1,7 +1,7 @@
 const { Router, response, request } = require ( 'express' );
 const { newUser, findUsers, findUserById, updateUser, deleteUser } = require( '../controllers/users' );
 const { validateJWT, validateAdmin } = require( '../middleware/jwt' );
-const { userNotNull } = require( '../middleware/validators' );
+const { userNotNull, uUserNotNull } = require( '../middleware/validators' );
 
 const router = Router();
 
@@ -22,7 +22,7 @@ router.post( '/', [ validateJWT, validateAdmin, userNotNull ], async ( req = req
     res.send( resp );
 });
 
-router.put( '/:id', [ validateJWT, validateAdmin, userNotNull ], async ( req = request , res = response ) => {
+router.put( '/:id', [ validateJWT, validateAdmin, uUserNotNull ], async ( req = request , res = response ) => {
     const id = req.params.id;
     const data = req.body;
     const resp = await updateUser( id, data );

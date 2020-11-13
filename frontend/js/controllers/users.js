@@ -1,5 +1,5 @@
 import { DOCUMENT, APP, URL } from '../dev.const.js';
-import { getHeaders, getUsers, saveUserSer } from './services.js';
+import { getHeaders, getUsers, saveUserSer, updateUserSer, deleteUserSer } from './services.js';
 
 const container = APP;
 const URL_USER = `${URL}users/`;
@@ -67,7 +67,7 @@ const deleteBtn = ( cell, formatterParams, onRendered ) => {
     button.id = id;
     button.classList.add( 'waves-effect', 'waves-light', 'btn-small', 'red', 'accent-4' );
     button.innerHTML = '<i class="material-icons">delete_forever</i>';
-    button.onclick = () =>  { deleteUser( id ) };
+    button.onclick = () =>  { deleteUser( id, cell ) };
     onRendered( function () {
         cell._cell.element.appendChild( button );
     })
@@ -94,7 +94,8 @@ const usersTable = async ( info ) => {
             } },
             { title:"Apellido", field:"apellido", width:'15%', hozAlign:"center", editor:"input" },
             { title:"Email", field:"email", width:'25%', hozAlign:"center", editor:"input" },
-            { title:"Rol", field:"rol", width:'20%', hozAlign:"center", editor:"input" },
+            { title:"Rol", field:"rol", width:'20%', hozAlign:"center", editor:"select",
+                editorParams:{values:{"ADMIN_ROL":"ADMIN_ROL", "USER_ROL":"USER_ROL" } } },
             { title:"Acciones", hozAlign:"center", formatter: deleteBtn, headerSort:false, }
         ],
         rowSelectionChanged: expData,
@@ -128,23 +129,24 @@ const saveUser = async( user ) => {
     const elem = document.querySelector( '.modal' );
     const modal = await M.Modal.getInstance( elem );
     const resp = await saveUserSer( user );
-    if( resp.ok ) {
-        swal( 'Exito', `¡Usuario ${resp.data.nombre} registrado!`, 'success' );
-    } else {
-        console.error( resp );
-        swal( 'Error', '¡Error al registrar!' , 'error' );
-    }
+    message( resp, '¡Éxito al guardar!', '¡Error al guardar!' );
     modal.close();
+    initUsers();
 };
 
-const deleteUser = ( id ) => {
-    alert( id );
+const deleteUser = async ( id, cell ) => {
+    const row = cell._cell.row;
+    const resp = await deleteUserSer( id );
+    message ( resp, '¡Eliminado correctamente!', '¡Error al eliminar!' );
+    await row.delete();
 };
 
-const updateUser = ( cell ) => {
+const updateUser = async ( cell ) => {
     const row = cell._cell.row;
     const data = row.data;
-    alert( JSON.stringify( data ) );
+    const id = data.uid;
+    const  resp = await updateUserSer( data, id );
+    message( resp, '¡Éxito al actualizar!', '¡Error al actualizar!' );
 };
 
 const expData = ( userList ) => {
@@ -175,4 +177,17 @@ const samePass = async ( input ) => {
             input.classList.remove( 'invalid' );
         }
     }, 500);
+}
+
+const message = ( data, msgok, msgbad ) => {
+    if( data.ok ) {
+        if( data.data.nombre ){
+            swal( 'Exito', `${msgok} ${data.data.nombre}`, 'success' );    
+        } else {
+            swal( 'Exito', msgok, 'success' );
+        }
+    } else {
+        console.error( data );
+        swal( 'Error', msgbad , 'error' );
+    }
 }
