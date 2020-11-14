@@ -64,15 +64,57 @@ export const deleteUserSer = async ( id ) => {
     } catch( error ) { console.error( error ) }
 };
 
+// Citys Services
 
+export const getCitiesSer = async () => {
+    const options = setOptions( false, 'GET' );
+    try {
+        const resp = await fetch( `${ URL }cities`, options );
+        const cities = await resp.json();
+        return cities;
+    } catch( error ) { console.error( error ) }
+};
+
+export const saveCompanySer = async ( company ) => {
+    const body = setURLParams( company );
+    const options = setOptions( body, 'POST' );
+    try{
+        const new_company = await fetch( `${URL}companies`, options );
+        const message = await new_company.json();
+        return message;
+    } catch( error ) { console.error( error ) }
+};
+
+export const updateCompanySer = async ( company, id )  => {
+    const body = setURLParams( company, true );
+    const options = setOptions( body, 'PUT' );
+    try{
+        const updated_company = await fetch( `${ URL }companies/${ id }`, options );
+        const message = await updated_company.json();
+        return message;
+    } catch( error ) { console.error( error ) }
+};
+
+export const deleteCompanySer = async ( id ) => {
+    const options = setOptions( false, 'DELETE' );
+    try {
+        const deleted = await fetch( `${ URL }companies/${ id }`, options );
+        const message = await deleted.json();
+        return message;
+    } catch( error ) { console.error( error ) }
+};
 
 // config petitions
-const setURLParams = ( data ) => {
+const setURLParams = ( data, update ) => {
     let info = new URLSearchParams();
     let keys = Object.keys( data );
     let values = Object.values( data );
     for ( let i = 0; i < keys.length; i++ ) {
-        info.append( keys[i], values[i] );
+        if( keys[i] === 'city' && update ){
+            info.append( keys[i], values[i].id );    
+        } else {
+            info.append( keys[i], values[i] );
+        }
     }
     return info;
 };

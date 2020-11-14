@@ -1,39 +1,30 @@
-import { DOCUMENT, APP, URL } from '../dev.const.js';
-import { getHeaders, saveUserSer, updateUserSer, deleteUserSer } from './services.js';
+import { DOCUMENT, APP, URL, getTemplate } from '../dev.const.js';
+import { getHeaders, getCitiesSer, saveCompanySer, updateCompanySer, deleteCompanySer } from './services.js';
 
 const container = APP;
-const URL_USER = `${URL}users/`;
+const URL_COM = `${URL}companies/`;
+let CITIES = {};
+let CTABLE = {};
 
-export const initUsers = async () => {
-    const usersTemp = await getTemplate();
+export const initCompanies = async () => {
+    const companiesTemp = await getTemplate( 'companies' );
     const headers = await getHeaders();
-    if( usersTemp !== false ) {
-        container.innerHTML = usersTemp;
+    if( companiesTemp !== false ) {
+        container.innerHTML = companiesTemp;
     }
     addEventNew();
+    await getCities();
     initSelForm();
     saveUserBtn();
-    changeConfirmPass();
-    usersTable( headers );
-};
-
-const getTemplate = async () => {
-    try {
-        const resp = await fetch( './pages/users.html' );
-        const users = await resp.text();
-        return users;
-    } catch ( err ) {
-        console.error( err );
-        return false;
-    }
+    setTable( headers );
 };
 
 const addEventNew = () => {
-    const button = DOCUMENT.getElementById( 'addUser' );
-    button.onclick = () => { addUser() };
+    const button = DOCUMENT.getElementById( 'addCompany' );
+    button.onclick = () => { addCompany() };
 };
 
-const addUser = () => {
+const addCompany = () => {
     const elems = document.querySelector( '.modal' );
     M.Modal.init( elems );
 };
@@ -44,39 +35,39 @@ const initSelForm = () => {
 };
 
 const saveUserBtn = () => {
-    const form = DOCUMENT.getElementById( 'userForm' );
-    const btnSave = DOCUMENT.getElementById( 'guardarU' );
+    const form = DOCUMENT.getElementById( 'companyForm' );
+    const btnSave = DOCUMENT.getElementById( 'guardar' );
     btnSave.onclick = () => {
-        const data = new FormData( form );
-        const user = {
-            nombre : data.get('nombre'),
-            apellido : data.get('apellido'),
-            password : data.get('password'),
-            email : data.get('email'),
-            rol : data.get('rol')
+        const formData = new FormData( form );
+        const data = {
+            nombre : formData.get('nombre'),
+            direccion : formData.get('direccion'),
+            email : formData.get('email'),
+            telefono : formData.get('telefono'),
+            city : formData.get('ciudad')
         }
-        saveUser( user );
+        saveCompany( data );
     };
 };
 
 const deleteBtn = ( cell, formatterParams, onRendered ) => {
-    const id = cell._cell.row.data.uid;
+    const id = cell._cell.row.data.id;
     const button = DOCUMENT.createElement('button');
     button.id = id;
     button.classList.add( 'waves-effect', 'waves-light', 'btn-small', 'red', 'accent-4' );
     button.innerHTML = '<i class="material-icons">delete_forever</i>';
-    button.onclick = () =>  { deleteUser( id, cell ) };
+    button.onclick = () =>  { deleteCompany( id, cell ) };
     onRendered( function () {
         cell._cell.element.appendChild( button );
-    })
+    });
 };
 
-const usersTable = async ( info ) => {
-    await new Tabulator("#usersTable", {
+const setTable = async ( info ) => {
+    await new Tabulator("#companiesTable", {
         pagination: 'remote',
         paginationSizeSelector: [ 5, 10, 15 ],
         paginationSize: 5,
-        ajaxURL: URL_USER,
+        ajaxURL: URL_COM,
         ajaxConfig: { method: 'GET', headers: info },
         ajaxSorting: true,
         ajaxURLGenerator: getData,
@@ -87,17 +78,16 @@ const usersTable = async ( info ) => {
                 cellClick:function(e, cell){
                     cell.getRow().toggleSelect();
             } },
-            { title:"Nombre", field:"nombre", width:'15%', hozAlign:"center", editor:"input", formatterParams:{
-                margin:"auto",
-            } },
-            { title:"Apellido", field:"apellido", width:'15%', hozAlign:"center", editor:"input" },
+            { title:"Nombre", field:"nombre", width:'15%', hozAlign:"center", editor:"input" },
+            { title:"Dirección", field:"direccion", width:'15%', hozAlign:"center", editor:"input" },
             { title:"Email", field:"email", width:'25%', hozAlign:"center", editor:"input" },
-            { title:"Rol", field:"rol", width:'20%', hozAlign:"center", editor:"select",
-                editorParams:{values:{"ADMIN_ROL":"ADMIN_ROL", "USER_ROL":"USER_ROL" } } },
+            { title:"Teléfono", field:"telefono", width:'10%', hozAlign:"center", editor:"input" },
+            { title:"Ciudad", field:"city.nombre", width:'20%', hozAlign:"center", editor:"select",
+                editorParams:{ values: { ...CTABLE } } },
             { title:"Acciones", hozAlign:"center", formatter: deleteBtn, headerSort:false, }
         ],
         rowSelectionChanged: expData,
-        cellEdited: updateUser,
+        cellEdited: updateCompany,
     });
 };
 
@@ -115,37 +105,43 @@ const getData = ( url, config, params ) => {
     return `${url}?skip=${skip}&limit=${limit}&sort=${sort}&way=${way}`;
 };
 
-const respData = ( url, params, response ) =>{
+const respData = ( url, params, response ) => {
     const resp = {
         last_page: response.data.last_page,
-        data: response.data.users
+        data: response.data.companies
     }
     return resp;
 };
 
-const saveUser = async( user ) => {
+const saveCompany = async( data ) => {
     const elem = document.querySelector( '.modal' );
     const modal = await M.Modal.getInstance( elem );
-    const resp = await saveUserSer( user );
+    const resp = await saveCompanySer( data );
     message( resp, '¡Éxito al guardar!', '¡Error al guardar!' );
     modal.close();
-    initUsers();
+    initCompanies();
 };
 
-const deleteUser = async ( id, cell ) => {
+const deleteCompany = async ( id, cell ) => {
     const row = cell._cell.row;
-    const resp = await deleteUserSer( id );
+    const resp = await deleteCompanySer( id );
     message ( resp, '¡Eliminado correctamente!', '¡Error al eliminar!' );
-    if( resp.ok ) {
+    if( resp.ok ){
         await row.delete();
     }
 };
 
-const updateUser = async ( cell ) => {
+const updateCompany = async ( cell ) => {
     const row = cell._cell.row;
     const data = row.data;
-    const id = data.uid;
-    const  resp = await updateUserSer( data, id );
+    const id = data.id;
+    const newVal = cell._cell.value;
+    if ( newVal in CITIES ) {
+        console.log(newVal, CITIES[newVal])
+        data.city.id = CITIES[newVal];
+        data.city.nombre = newVal;
+    }
+    const  resp = await updateCompanySer( data, id );
     message( resp, '¡Éxito al actualizar!', '¡Error al actualizar!' );
 };
 
@@ -154,29 +150,6 @@ const expData = ( userList ) => {
     if( userList.length > 0 ){
         console.log ( userList );
     }
-}
-
-const changeConfirmPass = () => {
-    const change = DOCUMENT.getElementById('confirm_password');
-    change.onkeyup = () => { samePass( change ) };
-};
-
-const samePass = async ( input ) => {
-    const form = DOCUMENT.getElementById( 'userForm' );
-    const span = DOCUMENT.querySelector( 'span.helper-text' );
-    const data = new FormData( form );
-    const password = data.get( 'password' );
-    setTimeout(() => {
-        if( input.value !== password ) {
-            input.classList.remove( 'valid' );
-            span.classList.remove( 'hide' );
-            input.classList.add( 'invalid' );
-        } else {
-            input.classList.add( 'valid' );
-            span.classList.add( 'hide' );
-            input.classList.remove( 'invalid' );
-        }
-    }, 500);
 }
 
 const message = ( data, msgok, msgbad ) => {
@@ -191,3 +164,20 @@ const message = ( data, msgok, msgbad ) => {
         swal( 'Error', msgbad , 'error' );
     }
 }
+
+const getCities = async () => {
+    const cities = await getCitiesSer();
+    setCities( cities );
+};
+
+const setCities = ( cities ) => {
+    let elems = DOCUMENT.querySelector( 'select' );
+    cities.data.forEach( city => {
+       let option = DOCUMENT.createElement( 'option' );
+       option.value = city.id;
+       option.innerText = city.nombre;
+       elems.appendChild( option );
+       Object.assign( CTABLE, { [city.nombre]: city.nombre } );
+       Object.assign( CITIES, { [city.nombre]: city.id } );
+    } );
+};

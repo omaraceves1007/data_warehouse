@@ -1,9 +1,10 @@
-import { DOCUMENT } from '../dev.const.js';
+import { DOCUMENT, getTemplate } from '../dev.const.js';
 import { initUsers } from './users.js';
+import { initCompanies } from './companies.js';
 
 export const getMenu = async ( user ) => {
     const nav = DOCUMENT.querySelector( 'div.nav-wrapper.blue.accent-4' );
-    const menu = await getMenuTemplate();
+    const menu = await getTemplate( 'menu' );
     if( menu !== false ) {
         nav.innerHTML = menu ;
         if( user.rol === 'ADMIN_ROL' ) {
@@ -24,17 +25,6 @@ const adminOpt = () => {
     first.after( usuarios );
 };
 
-const getMenuTemplate = async () => {
-    try{
-        const resp = await fetch( './pages/menu.html' );
-        const menu = await resp.text();
-        return menu;
-    } catch ( error ) {
-        console.error( error );
-        return false;
-    }
-};
-
 const setListeners = () => {
     setContactsClick();
     setCompaniesClick();
@@ -46,9 +36,10 @@ const setContactsClick = () => {
     contact.onclick = () => { console.log('contacts')}
 };
 
-const setCompaniesClick = () => {
+const setCompaniesClick = async () => {
     const company = DOCUMENT.getElementById( 'companies' );
-    company.onclick = () => { console.log('companies')}
+    // ejecutar init company
+    company.onclick = () => { initCompanies() };
 };
 
 const setRegionsClick = () => {

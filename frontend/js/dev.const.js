@@ -24,6 +24,16 @@ export const setUser = ( user ) =>{
     USER = { ...user };
 };
 export const getUser = () => USER;
+export const getTemplate = async ( option ) => {
+    try{
+        const resp = await fetch( `./pages/${option}.html` );
+        const menu = await resp.text();
+        return menu;
+    } catch ( error ) {
+        console.error( error );
+        return false;
+    }
+};
 // export const = ;
 // export const = ;
 // export const = ;
