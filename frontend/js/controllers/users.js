@@ -182,12 +182,12 @@ const samePass = async ( input ) => {
 const message = ( data, msgok, msgbad ) => {
     if( data.ok ) {
         if( data.data.nombre ){
-            swal( 'Exito', `${msgok} ${data.data.nombre}`, 'success' );    
+            Swal.fire( 'Exito', `${msgok} ${data.data.nombre}`, 'success' );    
         } else {
-            swal( 'Exito', msgok, 'success' );
+            Swal.fire( 'Exito', msgok, 'success' );
         }
     } else {
         console.error( data );
-        swal( 'Error', msgbad , 'error' );
+        Swal.fire( 'Error', msgbad , 'error' );
     }
 }

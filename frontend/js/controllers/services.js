@@ -64,17 +64,7 @@ export const deleteUserSer = async ( id ) => {
     } catch( error ) { console.error( error ) }
 };
 
-// Citys Services
-
-export const getCitiesSer = async () => {
-    const options = setOptions( false, 'GET' );
-    try {
-        const resp = await fetch( `${ URL }cities`, options );
-        const cities = await resp.json();
-        return cities;
-    } catch( error ) { console.error( error ) }
-};
-
+// Companies Services
 export const saveCompanySer = async ( company ) => {
     const body = setURLParams( company );
     const options = setOptions( body, 'POST' );
@@ -103,6 +93,127 @@ export const deleteCompanySer = async ( id ) => {
         return message;
     } catch( error ) { console.error( error ) }
 };
+
+// Regions Services
+
+export const getRegionsSer = async () => {
+    const options = setOptions( false, 'GET' );
+    try {
+        const resp = await fetch( `${ URL }regions`, options );
+        const regions = await resp.json();
+        return regions;
+    } catch( error ) { console.error( error ) }
+};
+
+export const saveRegionSer = async ( region ) => {
+    const body = setURLParams( region );
+    const options = setOptions( body, 'POST' );
+    try{
+        const new_region = await fetch( `${URL}regions`, options );
+        const message = await new_region.json();
+        return message;
+    } catch( error ) { console.error( error ) }
+};
+
+export const updateRegionSer = async ( region, id )  => {
+    const body = setURLParams( region, true );
+    const options = setOptions( body, 'PUT' );
+    try{
+        const updated_region = await fetch( `${ URL }regions/${ id }`, options );
+        const message = await updated_region.json();
+        return message;
+    } catch( error ) { console.error( error ) }
+};
+
+export const deleteRegionSer = async ( id ) => {
+    const options = setOptions( false, 'DELETE' );
+    try {
+        const deleted = await fetch( `${ URL }regions/${ id }`, options );
+        const message = await deleted.json();
+        return message;
+    } catch( error ) { console.error( error ) }
+};
+
+// Countries Services
+
+export const getCountriesSer = async () => {
+    const options = setOptions( false, 'GET' );
+    try {
+        const resp = await fetch( `${ URL }countries`, options );
+        const conuntries = await resp.json();
+        return conuntries;
+    } catch( error ) { console.error( error ) }
+};
+
+export const saveCountrySer = async ( region ) => {
+    const body = setURLParams( region );
+    const options = setOptions( body, 'POST' );
+    try{
+        const new_region = await fetch( `${URL}countries`, options );
+        const message = await new_region.json();
+        return message;
+    } catch( error ) { console.error( error ) }
+};
+
+export const updateCountrySer = async ( country, id )  => {
+    const body = setURLParams( country, true );
+    const options = setOptions( body, 'PUT' );
+    try{
+        const updated_country = await fetch( `${ URL }countries/${ id }`, options );
+        const message = await updated_country.json();
+        return message;
+    } catch( error ) { console.error( error ) }
+};
+
+export const deleteCountrySer = async ( id ) => {
+    const options = setOptions( false, 'DELETE' );
+    try {
+        const deleted = await fetch( `${ URL }countries/${ id }`, options );
+        const message = await deleted.json();
+        return message;
+    } catch( error ) { console.error( error ) }
+};
+
+// Citys Services
+
+export const getCitiesSer = async () => {
+    const options = setOptions( false, 'GET' );
+    try {
+        const resp = await fetch( `${ URL }cities`, options );
+        const cities = await resp.json();
+        return cities;
+    } catch( error ) { console.error( error ) }
+};
+
+export const saveCitySer = async ( region ) => {
+    const body = setURLParams( region );
+    const options = setOptions( body, 'POST' );
+    try{
+        const new_region = await fetch( `${URL}cities`, options );
+        const message = await new_region.json();
+        return message;
+    } catch( error ) { console.error( error ) }
+};
+
+export const updateCitySer = async ( city, id )  => {
+    const body = setURLParams( city, true );
+    const options = setOptions( body, 'PUT' );
+    try{
+        const updated_city = await fetch( `${ URL }cities/${ id }`, options );
+        const message = await updated_city.json();
+        return message;
+    } catch( error ) { console.error( error ) }
+};
+
+export const deleteCitySer = async ( id ) => {
+    const options = setOptions( false, 'DELETE' );
+    try {
+        const deleted = await fetch( `${ URL }cities/${ id }`, options );
+        const message = await deleted.json();
+        return message;
+    } catch( error ) { console.error( error ) }
+};
+
 
 // config petitions
 const setURLParams = ( data, update ) => {

@@ -6,8 +6,6 @@
     opacity: 1;
     pointer-events: all;
 }
-/* .tabulator-col-title [type="checkbox"]:checked,
-.tabulator-col-title [type="checkbox"]:not(:checked)  */
 .tabulator-col-title {
     text-align: center;
 }
@@ -18,3 +16,30 @@ select.tabulator-page-size {
 .tabulator-header {
     margin-left: 0 !important;
 }
+
+/* style tree */
+.tree-leaf { position: relative; }
+.tree-leaf .tree-child-leaves { display: block; margin-left: 15px; }
+.tree-leaf .hidden { display: none; }
+.tree-leaf .tree-expando { background: #ddd; color:#2979ff; border-radius: 3px; cursor: pointer; float: left; height: 10px; line-height: 10px; position: relative; text-align: center; top: 20%; width: 1%; }
+.tree-leaf .hidden { visibility: hidden; }
+.tree-leaf .tree-expando:hover { background: #aaa; color: #1a237e; }
+.tree-leaf .tree-leaf-text { cursor: pointer; float: left; width: 99%; padding-left: 2%; }
+.tree-leaf .tree-leaf-text:hover { color: #2979ff; }
+.tree-leaf .tree-leaf-content { height: 5vh; }
+.tree-leaf .tree-leaf-content:before, .tree-leaf .tree-leaf-content:after { content: " "; display: table; }
+.tree-leaf .tree-leaf-content:after { clear: both; }
+
+/* sweet buttons */
+.Swal.fire-button--exit { background-color: #bdbdbd; }
+.Swal.fire-button.Swal.fire-button--exit:hover { background-color: #757575; }
+.Swal.fire-button.Swal.fire-button--exit:focus,
+.Swal.fire-button.Swal.fire-button--exit:active { background-color: #616161 ; }
+.Swal.fire-button--edit { background-color: #1976d2; }
+.Swal.fire-button.Swal.fire-button--edit:hover { background-color: #1565c0; }
+.Swal.fire-button.Swal.fire-button--edit:focus,
+.Swal.fire-button.Swal.fire-button--edit:active { background-color: #0d47a1 ; }
+.Swal.fire-button--delete { background-color: #e57373; }
+.Swal.fire-button.Swal.fire-button--delete:hover { background-color: #d32f2f; }
+.Swal.fire-button.Swal.fire-button--delete:focus,
+.Swal.fire-button.Swal.fire-button--delete:active { background-color: #d50000; }

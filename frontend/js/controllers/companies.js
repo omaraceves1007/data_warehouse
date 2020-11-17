@@ -137,7 +137,6 @@ const updateCompany = async ( cell ) => {
     const id = data.id;
     const newVal = cell._cell.value;
     if ( newVal in CITIES ) {
-        console.log(newVal, CITIES[newVal])
         data.city.id = CITIES[newVal];
         data.city.nombre = newVal;
     }

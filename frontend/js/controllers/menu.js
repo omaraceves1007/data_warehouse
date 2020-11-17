@@ -1,6 +1,7 @@
 import { DOCUMENT, getTemplate } from '../dev.const.js';
 import { initUsers } from './users.js';
 import { initCompanies } from './companies.js';
+import { initRegions }from './regions.js';
 
 export const getMenu = async ( user ) => {
     const nav = DOCUMENT.querySelector( 'div.nav-wrapper.blue.accent-4' );
@@ -33,16 +34,15 @@ const setListeners = () => {
 
 const setContactsClick = () => {
     const contact = DOCUMENT.getElementById( 'contacts' );
-    contact.onclick = () => { console.log('contacts')}
+    contact.onclick = () => {  };
 };
 
 const setCompaniesClick = async () => {
     const company = DOCUMENT.getElementById( 'companies' );
-    // ejecutar init company
     company.onclick = () => { initCompanies() };
 };
 
 const setRegionsClick = () => {
     const region = DOCUMENT.getElementById( 'regions' );
-    region.onclick = () => { console.log('regions')}
+    region.onclick = () => { initRegions() };
 };
