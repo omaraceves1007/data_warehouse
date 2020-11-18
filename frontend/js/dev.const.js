@@ -34,7 +34,10 @@ export const getTemplate = async ( option ) => {
         return false;
     }
 };
-// export const = ;
-// export const = ;
-// export const = ;
-// export const = ;
+export const disableSubmit = () => {
+    let forms = DOCUMENT.querySelectorAll( 'form' );
+    forms.forEach( form => form.onsubmit = ( e)  => {
+        e.preventDefault();
+        return false;
+    } );
+};

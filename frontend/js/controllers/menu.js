@@ -1,4 +1,5 @@
 import { DOCUMENT, getTemplate } from '../dev.const.js';
+import { existData, deleteData } from '../controllers/storage.js';
 import { initUsers } from './users.js';
 import { initCompanies } from './companies.js';
 import { initRegions }from './regions.js';
@@ -30,6 +31,7 @@ const setListeners = () => {
     setContactsClick();
     setCompaniesClick();
     setRegionsClick();
+    setLogoutClick();
 };
 
 const setContactsClick = () => {
@@ -46,3 +48,15 @@ const setRegionsClick = () => {
     const region = DOCUMENT.getElementById( 'regions' );
     region.onclick = () => { initRegions() };
 };
+
+const setLogoutClick = () => {
+    const region = DOCUMENT.getElementById( 'logout' );
+    region.onclick = () => { logout(); };
+};
+
+const logout = () => {
+    if( existData( 'token' ) ) {
+        deleteData( 'token' );
+        location.reload();
+    }
+}

@@ -40,6 +40,7 @@ const saveToken = ( res ) => {
         if( !existData( 'token' ) ) {
             save( { key: 'token', data : res.data } );
             setToken( res.data );
+            location.reload();
         }
     }
 }; 

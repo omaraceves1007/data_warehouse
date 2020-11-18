@@ -13,3 +13,7 @@ export function save( object ) {
 export function getData( key ) {
     return storage.getItem( key );
 }
+
+export function deleteData( key ) {
+    storage.removeItem( key );
+}

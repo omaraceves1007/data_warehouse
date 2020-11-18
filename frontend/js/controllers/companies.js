@@ -1,4 +1,4 @@
-import { DOCUMENT, APP, URL, getTemplate } from '../dev.const.js';
+import { DOCUMENT, APP, URL, getTemplate, disableSubmit } from '../dev.const.js';
 import { getHeaders, getCitiesSer, saveCompanySer, updateCompanySer, deleteCompanySer } from './services.js';
 
 const container = APP;
@@ -12,6 +12,7 @@ export const initCompanies = async () => {
     if( companiesTemp !== false ) {
         container.innerHTML = companiesTemp;
     }
+    disableSubmit();
     addEventNew();
     await getCities();
     initSelForm();

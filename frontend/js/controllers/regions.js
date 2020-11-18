@@ -1,8 +1,8 @@
 import {
     DOCUMENT,
     APP,
-    URL,
-    getTemplate
+    getTemplate,
+    disableSubmit
 } from '../dev.const.js';
 import {
     getHeaders,
@@ -34,6 +34,7 @@ export const initRegions = async () => {
     if (companiesTemp !== false) {
         container.innerHTML = companiesTemp;
     }
+    disableSubmit();
     await getInfo();
     addEventNew('modal1', 'addRegion');
     addEventNew('modal2', 'addCountry');
@@ -70,7 +71,7 @@ const setDicData = (dic, data, parent, type) => {
                 name: el.nombre,
                 id: el.id,
                 children: [],
-                expanded: false,
+                expanded: true,
                 type
             };
         }
@@ -100,11 +101,12 @@ const iniTree = (list) => {
             icon: 'info',
             title: 'Acciones del Nodo',
             text: 'Selecciona una acción para ' + e.data.name,
+            focusConfirm: false,
             showDenyButton: true,
             showCancelButton: true,
             confirmButtonText: 'Editar',
             denyButtonText: 'Eliminar',
-        }).then( result => actions( result, e ) );
+        }).then(result => actions(result, e));
     });
 };
 
@@ -191,17 +193,16 @@ const message = async (data, msgok, msgbad) => {
     }
 }
 
-const actions = async ( value, e ) => {
+const actions = async (value, e) => {
     const type = e.data.type;
     const id = e.data.id;
     if (value.isConfirmed) {
-        const upd = type === 1 ? updateRegionSer : type === 2 ? updateCountrySer : updateCitySer;
         if (type === 1) {
-            addItem('modal1');
+            updateDialog( id, type, e.data );
         } else if (type === 2) {
-            addItem('modal2');
+            updateDialog( id, type, e.data );
         } else {
-            addItem('modal3');
+            updateDialog( id, type, e.data );
         }
     }
     if (value.isDenied) {
@@ -211,3 +212,38 @@ const actions = async ( value, e ) => {
         initRegions();
     }
 }
+
+const updateDialog = async ( id, type, data ) => {
+    const title = type === 1 ? 'Región' : type === 2 ? 'País' : 'Ciudad';
+    const upd = type === 1 ? updateRegionSer : type === 2 ? updateCountrySer : updateCitySer;
+    const form = type === 1 ? DOCUMENT.getElementById( 'regionForm' ) : type === 2 ? DOCUMENT.getElementById( 'countryForm' ) : DOCUMENT.getElementById( 'cityForm' );
+    const formId = form.id;
+    Swal.fire({
+        title: 'Actualizar ' + data.name,
+        html: form,
+        focusConfirm: false,
+        preConfirm: () => {
+            const formV =  new FormData ( DOCUMENT.getElementById( formId ) );
+            if ( formV.get( 'regionId' ) ) {
+                return { nombre: formV.get('country'), region: formV.get( 'regionId' ) };
+            } else if ( formV.get( 'countryId' ) ) {
+                return { nombre: formV.get('city'), country: formV.get( 'countryId') , region: data.parent.id };
+            }
+            return { nombre: formV.get('nombre') };
+        }
+    }).then( res => updateRegion( id, res.value, upd ) );
+}
+
+const updateRegion = async ( id, data, service ) => {
+    const resp = await service( data, id );
+    await message( resp, '¡Actualizado!', '¡Error al Actualizar!' );
+    initRegions();
+};
+
+// const disableSubmit = () => {
+//     let forms = DOCUMENT.querySelectorAll( 'form' );
+//     forms.forEach( form => form.onsubmit = ( e)  => {
+//         e.preventDefault();
+//         return false;
+//     } );
+// };

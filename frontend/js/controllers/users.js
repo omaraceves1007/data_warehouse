@@ -1,4 +1,4 @@
-import { DOCUMENT, APP, URL } from '../dev.const.js';
+import { DOCUMENT, APP, URL, disableSubmit } from '../dev.const.js';
 import { getHeaders, saveUserSer, updateUserSer, deleteUserSer } from './services.js';
 
 const container = APP;
@@ -10,6 +10,7 @@ export const initUsers = async () => {
     if( usersTemp !== false ) {
         container.innerHTML = usersTemp;
     }
+    disableSubmit();
     addEventNew();
     initSelForm();
     saveUserBtn();
