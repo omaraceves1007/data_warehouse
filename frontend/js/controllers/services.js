@@ -65,6 +65,15 @@ export const deleteUserSer = async ( id ) => {
 };
 
 // Companies Services
+export const getCompaniesSer = async () => {
+    const options = setOptions( false, 'GET' );
+    try {
+        const resp = await fetch( `${ URL }companies`, options );
+        const compnies = await resp.json();
+        return compnies;
+    } catch( error ) { console.error( error ) }
+};
+
 export const saveCompanySer = async ( company ) => {
     const body = setURLParams( company );
     const options = setOptions( body, 'POST' );
@@ -209,6 +218,46 @@ export const deleteCitySer = async ( id ) => {
     const options = setOptions( false, 'DELETE' );
     try {
         const deleted = await fetch( `${ URL }cities/${ id }`, options );
+        const message = await deleted.json();
+        return message;
+    } catch( error ) { console.error( error ) }
+};
+
+// Citys Services
+
+export const getContactsSer = async () => {
+    const options = setOptions( false, 'GET' );
+    try {
+        const resp = await fetch( `${ URL }contacts`, options );
+        const contacts = await resp.json();
+        return contacts;
+    } catch( error ) { console.error( error ) }
+};
+
+export const saveContactSer = async ( region ) => {
+    const body = setURLParams( region );
+    const options = setOptions( body, 'POST' );
+    try{
+        const new_region = await fetch( `${URL}contacts`, options );
+        const message = await new_region.json();
+        return message;
+    } catch( error ) { console.error( error ) }
+};
+
+export const updateContactSer = async ( contact, id )  => {
+    const body = setURLParams( contact, true );
+    const options = setOptions( body, 'PUT' );
+    try{
+        const updated_contact = await fetch( `${ URL }contacts/${ id }`, options );
+        const message = await updated_contact.json();
+        return message;
+    } catch( error ) { console.error( error ) }
+};
+
+export const deleteContactSer = async ( id ) => {
+    const options = setOptions( false, 'DELETE' );
+    try {
+        const deleted = await fetch( `${ URL }contacts/${ id }`, options );
         const message = await deleted.json();
         return message;
     } catch( error ) { console.error( error ) }

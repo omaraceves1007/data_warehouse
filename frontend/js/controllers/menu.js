@@ -3,6 +3,7 @@ import { existData, deleteData } from '../controllers/storage.js';
 import { initUsers } from './users.js';
 import { initCompanies } from './companies.js';
 import { initRegions }from './regions.js';
+import { initContacts }from './constacts.js';
 
 export const getMenu = async ( user ) => {
     const nav = DOCUMENT.querySelector( 'div.nav-wrapper.blue.accent-4' );
@@ -36,7 +37,7 @@ const setListeners = () => {
 
 const setContactsClick = () => {
     const contact = DOCUMENT.getElementById( 'contacts' );
-    contact.onclick = () => {  };
+    contact.onclick = () => { initContacts() };
 };
 
 const setCompaniesClick = async () => {
@@ -51,7 +52,7 @@ const setRegionsClick = () => {
 
 const setLogoutClick = () => {
     const region = DOCUMENT.getElementById( 'logout' );
-    region.onclick = () => { logout(); };
+    region.onclick = () => { logout() };
 };
 
 const logout = () => {

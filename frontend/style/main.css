@@ -87,5 +87,5 @@ select.tabulator-page-size {
 .pr-3, .px-3 { padding-right: 3rem !important; }
 .pr-4, .px-4 { padding-right: 4rem !important; }
 
-#modal1{ width: 40% !important;}
+#modal1.region{ width: 40% !important;}
 .modal-content{ padding: 2rem 2rem 0 2rem !important;}
