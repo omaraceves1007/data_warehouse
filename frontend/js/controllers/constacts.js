@@ -31,20 +31,81 @@ const addCompany = () => {
     M.Modal.init( elems );
 };
 
+// Cell formatters 
 
-// Table configurations
-
-const deleteBtn = ( cell, formatterParams, onRendered ) => {
+const acctionsBtns = ( cell, formatterParams, onRendered ) => {
     const id = cell._cell.row.data.id;
-    const button = DOCUMENT.createElement('button');
-    button.id = id;
-    button.classList.add( 'waves-effect', 'waves-light', 'btn-small', 'red', 'accent-4' );
-    button.innerHTML = '<i class="material-icons">delete_forever</i>';
-    button.onclick = () =>  { deleteCompany( id, cell ) };
+    const updateBtn = DOCUMENT.createElement('button');
+        updateBtn.id = id;
+        updateBtn.classList.add( 'waves-effect', 'waves-light', 'btn-small', 'blue', 'accent-4' );
+        updateBtn.innerHTML = '<i class="material-icons">edit</i>';
+        updateBtn.onclick = () =>  { updateCotact( id, cell ) };
+    const deleteBtn = DOCUMENT.createElement('button');
+        deleteBtn.id = id;
+        deleteBtn.classList.add( 'waves-effect', 'waves-light', 'btn-small', 'red', 'accent-4', 'ml-1' );
+        deleteBtn.innerHTML = '<i class="material-icons">delete_forever</i>';
+        deleteBtn.onclick = () =>  { deleteContact( id, cell ) };
     onRendered( function () {
-        cell._cell.element.appendChild( button );
+        cell._cell.element.append( updateBtn, deleteBtn );
     });
 };
+
+const contactFormatter = ( cell, formatterParams, onRendered ) => {
+    const data = cell._cell.row.data;
+    const divCont = DOCUMENT.createElement( 'div' );
+        divCont.classList.add( 'left-align' );
+    const span = DOCUMENT.createElement( 'span' );
+        span.innerText = `${data.nombre} ${data.apellido}`;
+    const psmall = DOCUMENT.createElement( 'span' );
+        psmall.innerHTML = `<br/><small style="color: #616161"> ${data.email} </small>`;
+        divCont.append( span, psmall );
+    onRendered( () => {
+        cell._cell.element.appendChild( divCont );
+    } );
+};
+
+const countryFormatter = ( cell, formatterParams, onRendered ) => {
+    const data = cell._cell.row.data;
+    const divCont = DOCUMENT.createElement( 'div' );
+        divCont.classList.add( 'left-align' );
+    const span = DOCUMENT.createElement( 'span' );
+        span.innerText = `${data.country.nombre}`;
+    const psmall = DOCUMENT.createElement( 'span' );
+        psmall.innerHTML = `<br/><small style="color: #616161">${data.region.nombre} </small>`;
+        divCont.append( span, psmall );
+    onRendered( () => {
+        cell._cell.element.appendChild( divCont );
+    } );
+};
+
+const progressFormat = ( cell, params, onRendered ) => {
+    const data = cell._cell.row.data;
+    let bgColor = '#03a9f4';
+    if( data.interes > '25%' && data.interes <= '50%' ) { bgColor = '#ffd600' }
+    if( data.interes > '50%' && data.interes <= '99%' ) { bgColor = '#ff6f00' }
+    if( data.interes === '100%' ) { bgColor = '#ff0000' }
+    const temp = `<div class="tabulator-col-resize-handle"></div>
+                <div class="tabulator-col-resize-handle prev"></div>
+                <div data-max="100" data-min="0" style="width: ${data.interes}; 
+                 background-color: ${ bgColor };" class="interes-bar">
+                    <p class="interes-bar-text"><small>${data.interes}</small></p>
+                </div>`;
+    onRendered( () => cell._cell.element.innerHTML = temp );
+};
+
+const canalesFormat = ( cell, params, onRendered ) => {
+    const canales = cell._cell.row.data.canales;
+    const divCont = DOCUMENT.createElement( 'div' );
+    canales.forEach( canal => {
+        const badge = DOCUMENT.createElement( 'span' );
+            badge.classList.add( 'new', 'badge', 'bg-badge' );
+            badge.setAttribute( 'data-badge-caption', canal.nombre );
+            divCont.appendChild( badge );
+    } );
+    onRendered( () => cell._cell.element.append( divCont ) );
+};
+
+// Table configurations
 
 const setTable = async ( info ) => {
     await new Tabulator("#contactsTable", {
@@ -58,22 +119,19 @@ const setTable = async ( info ) => {
         ajaxResponse: respData,
         layout: "fitDataStretch",
         columns: [
-            { formatter:"rowSelection", titleFormatter:"rowSelection", hozAlign:"center", headerSort:false,
+            { formatter:"rowSelection", titleFormatter:"rowSelection", headerSort:false,
                 cellClick:function(e, cell){
                     cell.getRow().toggleSelect();
             } },
-            { title:"Contacto", field:"nombre"/* , width:'15%' */, hozAlign:"center", editor:"input" },
-            { title:"País/Región", field:"country.nombre"/* , width:'15%' */, hozAlign:"center", editor:"input" },
-            { title:"Compañia", field:"company.nombre"/* , width:'25%' */, hozAlign:"center", editor:"input" },
-            { title:"Cargo", field:"cargo", /* width:'10%', */ hozAlign:"center", editor:"input" },
-            { title:"Canal preferido", field:"canales[0].nombre", /* width:'10%', */ hozAlign:"center", editor:"input" },
-            { title:"Interés", field:"interes", /* width:'10%', */ hozAlign:"center", editor:"input" },
-            // { title:"Ciudad", field:"city.nombre", width:'20%', hozAlign:"center", editor:"select",
-            //     editorParams:{ values: { ...CTABLE } } },
-            { title:"Acciones", hozAlign:"center", formatter: deleteBtn, headerSort:false, }
+            { title:"Contacto", field:"nombre", formatter: contactFormatter },
+            { title:"País/Región", field:"country.nombre", formatter: countryFormatter },
+            { title:"Compañia", field:"company.nombre" },
+            { title:"Cargo", field:"cargo" },
+            { title:"Canal preferido", formatter: canalesFormat },
+            { title:"Interés", field:"interes", formatter: progressFormat },
+            { title:"Acciones", hozAlign:"center", formatter: acctionsBtns, headerSort:false }
         ],
         rowSelectionChanged: expData,
-        // cellEdited: updateCompany,
     });
 };
 
@@ -99,8 +157,8 @@ const respData = ( url, params, response ) => {console.log(response)
     return resp;
 };
 
-const deleteCompany = async ( id, cell ) => {
-    const row = cell._cell.row;console.log(row);
+const deleteContact = async ( id, cell ) => {
+    const row = cell._cell.row;console.log('delete');
     // const resp = await deleteCompanySer( id );
     // message ( resp, '¡Eliminado correctamente!', '¡Error al eliminar!' );
     // if( resp.ok ){
@@ -108,18 +166,18 @@ const deleteCompany = async ( id, cell ) => {
     // }
 };
 
-// const updateCompany = async ( cell ) => {
-//     const row = cell._cell.row;
-//     const data = row.data;
-//     const id = data.id;
-//     const newVal = cell._cell.value;
-//     if ( newVal in CITIES ) {
-//         data.city.id = CITIES[newVal];
-//         data.city.nombre = newVal;
-//     }
-//     const  resp = await updateCompanySer( data, id );
-//     message( resp, '¡Éxito al actualizar!', '¡Error al actualizar!' );
-// };
+const updateCotact = async ( id, cell ) => {
+    const row = cell._cell.row;console.log('update')
+    // const data = row.data;
+    // const id = data.id;
+    // const newVal = cell._cell.value;
+    // if ( newVal in CITIES ) {
+    //     data.city.id = CITIES[newVal];
+    //     data.city.nombre = newVal;
+    // }
+    // const  resp = await updateCompanySer( data, id );
+    // message( resp, '¡Éxito al actualizar!', '¡Error al actualizar!' );
+};
 
 const expData = ( userList ) => {
     // document.getElementById("select-stats").innerHTML = data.length;

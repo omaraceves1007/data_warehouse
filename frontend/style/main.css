@@ -89,3 +89,26 @@ select.tabulator-page-size {
 
 #modal1.region{ width: 40% !important;}
 .modal-content{ padding: 2rem 2rem 0 2rem !important;}
+
+.interes-bar {
+    display: inline-block;
+    position: relative;
+    height: 50%;
+    border-radius: 10px;
+    margin-top: 10%;
+}
+.interes-bar-text {
+    display: inline-block;
+    margin-top: 0;
+    color:#240534;
+    margin-bottom: 0 !important;
+    margin-left: 1vh;
+    font-weight: 700;
+}
+.bg-badge{
+    border-radius: 10px !important;
+    background-color: #03a9f4 !important;
+    float: left !important;
+    margin-left: 5px !important;
+    margin-top: 1px !important;
+}
