@@ -12,14 +12,17 @@ const save = async ( data ) => {
 };
 
 const findAll = async ( query ) => {
-    const skip = parseInt( query.skip, 10 ),
-        limit = parseInt( query.limit, 10 ),
-        sort = query.sort,
-        way = parseInt( query.way, 10 ),
+    let skip, limit, sort, way, sorting
+    if( query.skip ) {
+        skip = parseInt( query.skip, 10 );
+        limit = parseInt( query.limit, 10 );
+        sort = query.sort;
+        way = parseInt( query.way, 10 );
         sorting = {};
-    sorting[sort] = way;
+        sorting[sort] = way;
+    }
     try {
-        const companies = await Company.find( {} )
+        const companies = query.skip ? await Company.find( {} )
                         .populate( {
                             path: 'city',
                             select: 'nombre id country',
@@ -29,9 +32,21 @@ const findAll = async ( query ) => {
                             }
                         } )
                         .skip( skip ).limit( limit ).sort( sorting )
-                        .exec();
-        const last = await getLastPage( limit );
-        return { last_page: last, companies };
+                        .exec() : 
+                        await Company.find( {} )
+                        .populate( {
+                            path: 'city',
+                            select: 'nombre id country',
+                            populate: { 
+                                path: 'country',
+                                populate: { path: 'region' }
+                            }
+                        } );
+        if( query.skip ) {
+            const last = await getLastPage( limit );
+            return { last_page: last, companies };
+        }
+        return companies;
     } catch( error ){
         console.log( error );
         return { error: true };

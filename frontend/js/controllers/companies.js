@@ -23,6 +23,7 @@ export const initCompanies = async () => {
 const addEventNew = () => {
     const button = DOCUMENT.getElementById( 'addCompany' );
     button.onclick = () => { addCompany() };
+    M.Tooltip.init( button ,{ margin: 0 } );
 };
 
 const addCompany = () => {
@@ -55,9 +56,12 @@ const deleteBtn = ( cell, formatterParams, onRendered ) => {
     const id = cell._cell.row.data.id;
     const button = DOCUMENT.createElement('button');
     button.id = id;
-    button.classList.add( 'waves-effect', 'waves-light', 'btn-small', 'red', 'accent-4' );
+    button.classList.add( 'waves-effect', 'waves-light', 'btn-small', 'red', 'accent-4', 'tooltipped' );
     button.innerHTML = '<i class="material-icons">delete_forever</i>';
     button.onclick = () =>  { deleteCompany( id, cell ) };
+    button.setAttribute( 'data-position', 'top' );
+    button.setAttribute( 'data-tooltip', `Eliminar ${cell._cell.row.data.nombre}` );
+    M.Tooltip.init( button ,{ margin: 0 } );
     onRendered( function () {
         cell._cell.element.appendChild( button );
     });

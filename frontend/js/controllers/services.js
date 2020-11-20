@@ -234,12 +234,12 @@ export const getContactsSer = async () => {
     } catch( error ) { console.error( error ) }
 };
 
-export const saveContactSer = async ( region ) => {
-    const body = setURLParams( region );
+export const saveContactSer = async ( contact ) => {
+    const body = setURLParams( contact );
     const options = setOptions( body, 'POST' );
     try{
-        const new_region = await fetch( `${URL}contacts`, options );
-        const message = await new_region.json();
+        const new_contact = await fetch( `${URL}contacts`, options );
+        const message = await new_contact.json();
         return message;
     } catch( error ) { console.error( error ) }
 };
