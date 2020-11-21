@@ -8,6 +8,7 @@ const container = APP;
 const URL_COM = `${URL}contacts/`;
 let companies = {}, regions = {}, countries = {}, cities = {}; 
 let CANALES = 1;
+let dialog;
 
 export const initContacts = async () => {
     const companiesTemp = await getTemplate( 'contacts' );
@@ -21,7 +22,7 @@ export const initContacts = async () => {
     initSelsForm();
     slider();
     createchanel( CANALES );
-    saveNewBtn();
+    saveNewBtn( false );
     setTable( headers );
 };
 
@@ -33,7 +34,7 @@ const addEventNew = () => {
 
 const addCompany = () => {
     const elems = document.querySelector( '.modal' );
-    M.Modal.init( elems );
+    dialog = M.Modal.init( elems );
 };
 
 const getInfoSels = async () => {
@@ -43,8 +44,8 @@ const getInfoSels = async () => {
                                         await getCitiesSer() ];
     initDic( com, companies, 'company' );
     initDic( reg, regions, 'region' );
-    initDicChild( count, countries, 'region', 'pais' );
-    initDicChild( cit, cities, 'country', 'ciudad' );
+    initDicChild( count, countries, 'region', 'country' );
+    initDicChild( cit, cities, 'country', 'city' );
 };
 
 const initDic = ( data, dic, sel ) => {
@@ -65,9 +66,9 @@ const initDicChild = ( data, dic, parent, sel ) => {
             dic[item[parent]._id][item.id] = item.nombre;
         }
     } );
-    if( sel === 'pais' ) {
+    if( sel === 'country' ) {
         const parent = DOCUMENT.getElementById( sel );
-        parent.onchange = () => { selOptions( parent.value, 'ciudad', cities )};
+        parent.onchange = () => { selOptions( parent.value, 'city', cities )};
     }
 };
 
@@ -80,13 +81,13 @@ const setOptions = ( dic, sel ) => {
         select.appendChild( option );
     }
     if( sel === 'region' ) {
-        select.onchange = () => { selOptions( select.value, 'pais', countries ) };
+        select.onchange = () => { selOptions( select.value, 'country', countries ) };
     };
 };
 
 const selOptions = ( parentId, sel, dic ) => {
     const select = DOCUMENT.getElementById( sel );
-    select.innerHTML = sel === 'pais' ? `<option value="" disabled selected> Seleccior País</option>` 
+    select.innerHTML = sel === 'country' ? `<option value="" disabled selected> Seleccior País</option>` 
                                 : `<option value="" disabled selected> Seleccior Ciudad</option>`;
     let options;
     if( parentId in dic ) {
@@ -115,9 +116,9 @@ const slider = () => {
     } );
 };
 
-const saveNewBtn = () => {
+const saveNewBtn = ( update, id ) => {
     const savebtn = DOCUMENT.getElementById( 'guardar' );
-        savebtn.onclick = () => { saveContact(); };
+        savebtn.onclick = () => { saveContact( update, id ); };
 };
 
 // chanels Operations 
@@ -125,7 +126,7 @@ const saveNewBtn = () => {
 const createchanel = ( id ) => {
     const form = DOCUMENT.getElementById('contactForm');
     const row = DOCUMENT.createElement( 'div' );
-        row.classList.add( 'row' );
+        row.classList.add( 'row', 'chanel' );
     const canal = canalSel( id );
     const cuenta = acountIn( id );
     const preferencia = prefSel( id );
@@ -147,7 +148,7 @@ const canalSel = ( id ) => {
         canal.name = 'canal' + id;
         canal.id = 'canal'+id;
         canal.classList.add( )
-    const options = `<option value="" disabled selected> Seleccionar Canal</option>
+    const options = `<option value="" disabled selected>Seleccionar Canal</option>
                     <option value="Facebook"> Facebook </option>
                     <option value="Instagram"> Instagram </option>
                     <option value="Twitter"> Twitter </option>
@@ -178,9 +179,9 @@ const prefSel = ( id ) => {
         canal.id = 'preferencia'+id;
         canal.classList.add( )
     const options = `<option value="" disabled selected>Preferencias</option>
-                    <option value="Sin preferencia"> Sin preferencia </option>
-                    <option value="Canal favorito"> Canal favorito </option>
-                    <option value="No molestar"> No molestar </option>`;
+                    <option value="Sin Preferencia"> Sin Preferencia </option>
+                    <option value="Canal Favorito"> Canal Favorito </option>
+                    <option value="No Molestar"> No Molestar </option>`;
     const label = DOCUMENT.createElement( 'label' );
         label.setAttribute( 'for', 'preferencia'+id );
         label.innerText = 'Preferencias';
@@ -275,10 +276,12 @@ const canalesFormat = ( cell, params, onRendered ) => {
     const canales = cell._cell.row.data.canales;
     const divCont = DOCUMENT.createElement( 'div' );
     canales.forEach( canal => {
-        const badge = DOCUMENT.createElement( 'span' );
-            badge.classList.add( 'new', 'badge', 'bg-badge' );
-            badge.setAttribute( 'data-badge-caption', canal.nombre );
-            divCont.appendChild( badge );
+        if( canal.preferencia === 'Canal Favorito' ){
+            const badge = DOCUMENT.createElement( 'span' );
+                badge.classList.add( 'new', 'badge', 'bg-badge' );
+                badge.setAttribute( 'data-badge-caption', canal.nombre );
+                divCont.appendChild( badge );
+        }
     } );
     onRendered( () => cell._cell.element.append( divCont ) );
 };
@@ -335,33 +338,113 @@ const respData = ( url, params, response ) => {
     return resp;
 };
 
-const saveContact = () => {
+const saveContact = async ( update, id ) => {
+    const elem = DOCUMENT.getElementById( 'modalContact' );
+    const modal = await M.Modal.getInstance( elem );
     const formT = DOCUMENT.getElementById( 'contactForm' );
     const form = new FormData( formT );
     const data = setData( form );
-    console.log(data)
+    let resp;
+    if( update ) {
+        resp = await updateContactSer( data, id );
+    } else {
+        resp =  await saveContactSer( data );
+    }
+    await message( resp, '¡Éxito al guardar!', '¡Error al guardar!' );
+    modal.close();
+    initContacts();
 };
 
 const deleteContact = async ( id, cell ) => {
-    const row = cell._cell.row;console.log('delete');
-    // const resp = await deleteCompanySer( id );
-    // message ( resp, '¡Eliminado correctamente!', '¡Error al eliminar!' );
-    // if( resp.ok ){
-    //     await row.delete();
-    // }
+    const resp = await deleteContactSer( id );
+    await message ( resp, '¡Eliminado correctamente!', '¡Error al eliminar!' );
+    if( resp.ok ){
+        initContacts();
+    }
 };
 
 const updateCotact = async ( id, cell ) => {
-    const row = cell._cell.row;console.log('update')
-    // const data = row.data;
-    // const id = data.id;
-    // const newVal = cell._cell.value;
-    // if ( newVal in CITIES ) {
-    //     data.city.id = CITIES[newVal];
-    //     data.city.nombre = newVal;
-    // }
-    // const  resp = await updateCompanySer( data, id );
-    // message( resp, '¡Éxito al actualizar!', '¡Error al actualizar!' );
+    const { canales, ...info } = cell._cell.row .data;
+    const temp = DOCUMENT.querySelector( '.modal' );
+    let modal = M.Modal.getInstance( temp );
+    if( !modal ) {
+        modal = M.Modal.init( temp );
+    }
+    modal.open();
+    setUpdateCh( canales );
+    setUpdateInfo( temp, info );
+    
+
+    /* para guardar  */
+    saveNewBtn( true, id );
+};
+
+const setUpdateInfo = ( form, info ) => {
+    const inputs = form.querySelectorAll( 'input' );
+    const selects = form.querySelectorAll( 'select' );
+    inputs.forEach( input => {
+            if( input.id in info ){
+                if ( input.type === 'range' ) {
+                    const range = DOCUMENT.querySelector( 'output' );
+                    range.innerText = info[input.id];
+                }
+                input.value = info[input.id].includes('%') ? info[input.id].slice(0,-1) : info[input.id];
+                input.classList.add( 'valid' );
+                const label = DOCUMENT.querySelector( `#${input.id} + label` );
+                if( label ) { label.classList.add( 'active' ); }
+            }
+    });
+    selects.forEach( sel => { 
+            if( sel.id in info ) {
+                if( sel.id === 'city' || sel.id === 'country' ){
+                    if( sel.id === 'country' ) { selOptions( info['region']._id, 'country', countries ) }
+                    if( sel.id === 'city' ) { selOptions( info['country']._id, 'city', cities ) }
+                }
+                sel.value = info[sel.id]._id;
+                sel.disabled = false;
+                sel.M_FormSelect.wrapper.classList.remove('disabled');
+                sel.M_FormSelect.input.disabled = false;
+                sel.M_FormSelect.input.value = info[sel.id].nombre;
+            }
+    } );
+};
+
+const setUpdateCh = ( chanels ) => {
+    const chanelsHTML = DOCUMENT.querySelectorAll( '.chanel' );
+        chanelsHTML.forEach( chanel => chanel.remove() );
+    if( chanels.length > 0 ) {
+        for( let i = 0; i < chanels.length; i++ ) {
+            createchanel( i + 1 );
+            if( i + 1 < chanels.length ) {
+                const button = DOCUMENT.getElementById( i + 1 );
+                    button.remove();
+            }
+        }
+    }
+    setUpdateChData( chanels );
+};
+
+const setUpdateChData = ( chanels ) => {
+    const chanelsHTML = DOCUMENT.querySelectorAll( '.chanel' );
+    chanelsHTML.forEach( ( node, i ) => {
+        const input = node.querySelector( 'input#cuenta'+ ( i + 1 ) );
+        const selects = node.querySelectorAll( 'select' );
+
+        input.value = chanels[i].cuenta;
+        input.classList.add( 'valid' );
+        const label = DOCUMENT.querySelector( `#${input.id} + label` );
+        if( label ) { label.classList.add( 'active' ); }
+
+        selects.forEach( sel => {
+            if( sel.id.includes( 'canal' ) ) {
+                sel.value = chanels[i].nombre;
+                sel.M_FormSelect.input.value = chanels[i].nombre;
+            } else {console.log(chanels[i])
+                sel.value = chanels[i].preferencia;
+                sel.M_FormSelect.input.value = chanels[i].preferencia;
+            }
+        } );
+    } );
 };
 
 const setData = ( form ) => {
@@ -371,12 +454,13 @@ const setData = ( form ) => {
         nombre: form.get( 'nombre' ),
         apellido: form.get( 'apellido' ),
         cargo: form.get( 'cargo' ),
+        email: form.get( 'email' ),
         company: form.get( 'company' ),
         region: form.get( 'region' ),
-        country: form.get( 'pais' ),
-        city: form.get( 'ciudad' ),
+        country: form.get( 'country' ),
+        city: form.get( 'city' ),
         direccion: form.get( 'direccion' ),
-        interes: form.get( 'interes' ),
+        interes: form.get( 'interes' ) + '%',
         canales: []
     }
     for( let id in chanels ) {
@@ -409,15 +493,15 @@ const expData = ( userList ) => {
     }
 }
 
-const message = ( data, msgok, msgbad ) => {
+const message = async ( data, msgok, msgbad ) => {
     if( data.ok ) {
         if( data.data.nombre ){
-            swal( 'Exito', `${msgok} ${data.data.nombre}`, 'success' );    
+            await Swal.fire( 'Exito', `${msgok} ${data.data.nombre}`, 'success' );    
         } else {
-            swal( 'Exito', msgok, 'success' );
+            await Swal.fire( 'Exito', msgok, 'success' );
         }
     } else {
         console.error( data );
-        swal( 'Error', msgbad , 'error' );
+        await Swal.fire( 'Error', msgbad , 'error' );
     }
 }

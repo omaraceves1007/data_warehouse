@@ -23,6 +23,7 @@ const findAll = async ( query ) => {
                         .populate( 'company', 'nombre' )
                         .populate( 'country', 'nombre' )
                         .populate( 'region', 'nombre' )
+                        .populate( 'city', 'nombre' )
                         .skip( skip ).limit( limit ).sort( sorting )
                         .exec();
         const last = await getLastPage( limit );
@@ -39,6 +40,7 @@ const findById = async ( id ) => {
                         .populate( 'company', 'nombre' )
                         .populate( 'country', 'nombre' )
                         .populate( 'region', 'nombre' )
+                        .populate( 'city', 'nombre' )
                         .exec();
         return contact;
     } catch( error ){

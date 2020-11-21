@@ -106,6 +106,7 @@ const iniTree = (list) => {
             showCancelButton: true,
             confirmButtonText: 'Editar',
             denyButtonText: 'Eliminar',
+            reverseButtons: true,
         }).then(result => actions(result, e));
     });
 };
@@ -231,7 +232,11 @@ const updateDialog = async ( id, type, data ) => {
             }
             return { nombre: formV.get('nombre') };
         }
-    }).then( res => updateRegion( id, res.value, upd ) );
+    }).then( res => {
+        if( res.value ) {
+            updateRegion( id, res.value, upd )
+        }
+    } );
 }
 
 const updateRegion = async ( id, data, service ) => {
@@ -239,11 +244,3 @@ const updateRegion = async ( id, data, service ) => {
     await message( resp, '¡Actualizado!', '¡Error al Actualizar!' );
     initRegions();
 };
-
-// const disableSubmit = () => {
-//     let forms = DOCUMENT.querySelectorAll( 'form' );
-//     forms.forEach( form => form.onsubmit = ( e)  => {
-//         e.preventDefault();
-//         return false;
-//     } );
-// };

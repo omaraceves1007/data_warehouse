@@ -122,17 +122,16 @@ const saveCompany = async( data ) => {
     const elem = document.querySelector( '.modal' );
     const modal = await M.Modal.getInstance( elem );
     const resp = await saveCompanySer( data );
-    message( resp, '¡Éxito al guardar!', '¡Error al guardar!' );
+    await message( resp, '¡Éxito al guardar!', '¡Error al guardar!' );
     modal.close();
     initCompanies();
 };
 
 const deleteCompany = async ( id, cell ) => {
-    const row = cell._cell.row;
     const resp = await deleteCompanySer( id );
-    message ( resp, '¡Eliminado correctamente!', '¡Error al eliminar!' );
+    await message ( resp, '¡Eliminado correctamente!', '¡Error al eliminar!' );
     if( resp.ok ){
-        await row.delete();
+        initCompanies();
     }
 };
 
@@ -146,7 +145,7 @@ const updateCompany = async ( cell ) => {
         data.city.nombre = newVal;
     }
     const  resp = await updateCompanySer( data, id );
-    message( resp, '¡Éxito al actualizar!', '¡Error al actualizar!' );
+    await message( resp, '¡Éxito al actualizar!', '¡Error al actualizar!' );
 };
 
 const expData = ( userList ) => {
@@ -156,16 +155,16 @@ const expData = ( userList ) => {
     }
 }
 
-const message = ( data, msgok, msgbad ) => {
+const message = async ( data, msgok, msgbad ) => {
     if( data.ok ) {
         if( data.data.nombre ){
-            swal( 'Exito', `${msgok} ${data.data.nombre}`, 'success' );    
+            await Swal.fire( 'Exito', `${msgok} ${data.data.nombre}`, 'success' );    
         } else {
-            swal( 'Exito', msgok, 'success' );
+            await Swal.fire( 'Exito', msgok, 'success' );
         }
     } else {
         console.error( data );
-        swal( 'Error', msgbad , 'error' );
+        await Swal.fire( 'Error', msgbad , 'error' );
     }
 }
 

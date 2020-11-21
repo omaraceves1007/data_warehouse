@@ -4,7 +4,7 @@ let AUTH = { Authorization: null } ;
 export const setAuth = ( auth ) => AUTH.Authorization = auth;
 export const getAuth = () => AUTH;
 let TOKEN = '';
-export const setToken = ( token ) => { console.log(token);TOKEN = token};
+export const setToken = ( token ) => { TOKEN = token};
 export const getToken = () => TOKEN;
 export const DOCUMENT = document ;
 export const userInfo = ( token ) => {

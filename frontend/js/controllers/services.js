@@ -8,11 +8,11 @@ const setAuthorization = () => {
     }
 }
 
-export const getHeaders = () => {
+export const getHeaders = ( contact ) => {
     setAuthorization();
     const auth = getAuth();
     return {
-        'Content-type': CONTENT_TYPE['Content-type'],
+        'Content-type': contact ? 'application/json' : CONTENT_TYPE['Content-type'],
         Authorization: auth.Authorization
     }
 }
@@ -235,8 +235,8 @@ export const getContactsSer = async () => {
 };
 
 export const saveContactSer = async ( contact ) => {
-    const body = setURLParams( contact );
-    const options = setOptions( body, 'POST' );
+    const body = JSON.stringify(contact); //setURLParams( contact );
+    const options = setOptions( body, 'POST', true );
     try{
         const new_contact = await fetch( `${URL}contacts`, options );
         const message = await new_contact.json();
@@ -245,8 +245,8 @@ export const saveContactSer = async ( contact ) => {
 };
 
 export const updateContactSer = async ( contact, id )  => {
-    const body = setURLParams( contact, true );
-    const options = setOptions( body, 'PUT' );
+    const body = JSON.stringify(contact);//setURLParams( contact, true );
+    const options = setOptions( body, 'PUT',true );
     try{
         const updated_contact = await fetch( `${ URL }contacts/${ id }`, options );
         const message = await updated_contact.json();
@@ -279,9 +279,9 @@ const setURLParams = ( data, update ) => {
     return info;
 };
 
-const setOptions = ( body, method ) => {
+const setOptions = ( body, method, contact ) => {
     if ( !body ) {
         return { headers: getHeaders(), method };
     }
-    return { headers: getHeaders(), method, body }
+    return { headers: getHeaders (contact ), method, body }
 };

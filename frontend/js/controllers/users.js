@@ -132,17 +132,16 @@ const saveUser = async( user ) => {
     const elem = document.querySelector( '.modal' );
     const modal = await M.Modal.getInstance( elem );
     const resp = await saveUserSer( user );
-    message( resp, '¡Éxito al guardar!', '¡Error al guardar!' );
+    await message( resp, '¡Éxito al guardar!', '¡Error al guardar!' );
     modal.close();
     initUsers();
 };
 
 const deleteUser = async ( id, cell ) => {
-    const row = cell._cell.row;
     const resp = await deleteUserSer( id );
-    message ( resp, '¡Eliminado correctamente!', '¡Error al eliminar!' );
+    await message ( resp, '¡Eliminado correctamente!', '¡Error al eliminar!' );
     if( resp.ok ) {
-        await row.delete();
+        initUsers();
     }
 };
 
@@ -151,7 +150,7 @@ const updateUser = async ( cell ) => {
     const data = row.data;
     const id = data.uid;
     const  resp = await updateUserSer( data, id );
-    message( resp, '¡Éxito al actualizar!', '¡Error al actualizar!' );
+    await message( resp, '¡Éxito al actualizar!', '¡Error al actualizar!' );
 };
 
 const expData = ( userList ) => {
@@ -184,15 +183,15 @@ const samePass = async ( input ) => {
     }, 500);
 }
 
-const message = ( data, msgok, msgbad ) => {
+const message = async ( data, msgok, msgbad ) => {
     if( data.ok ) {
         if( data.data.nombre ){
-            Swal.fire( 'Exito', `${msgok} ${data.data.nombre}`, 'success' );    
+            await Swal.fire( 'Exito', `${msgok} ${data.data.nombre}`, 'success' );    
         } else {
-            Swal.fire( 'Exito', msgok, 'success' );
+            await Swal.fire( 'Exito', msgok, 'success' );
         }
     } else {
         console.error( data );
-        Swal.fire( 'Error', msgbad , 'error' );
+        await Swal.fire( 'Error', msgbad , 'error' );
     }
 }
