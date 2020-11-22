@@ -1,4 +1,4 @@
-export const URL = 'http://localhost:3000/api/';
+export const URL_API = 'http://localhost:3000/api/';
 export const CONTENT_TYPE = { 'Content-type': 'application/x-www-form-urlencoded' } ;
 let AUTH = { Authorization: null } ;
 export const setAuth = ( auth ) => AUTH.Authorization = auth;

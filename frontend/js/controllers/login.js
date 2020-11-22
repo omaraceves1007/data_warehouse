@@ -1,4 +1,4 @@
-import { URL, CONTENT_TYPE, setToken } from '../dev.const.js';
+import { URL_API, CONTENT_TYPE, setToken } from '../dev.const.js';
 import { existData, save } from '../controllers/storage.js';
 
 export const getLogin = async () => {
@@ -29,9 +29,9 @@ const login = ( data ) => {
         headers: CONTENT_TYPE,
         body: urlencoded
     };
-    fetch( `${URL}login/`, options )
+    fetch( `${URL_API}login/`, options )
     .then( resp => resp.json() )
-    .then( saveToken )
+    .then( session => saveToken( session ) )
     .catch( error => console.log( error ) );
 };
 
@@ -42,5 +42,8 @@ const saveToken = ( res ) => {
             setToken( res.data );
             location.reload();
         }
+    } else {
+        console.log( res.data );
+        Swal.fire( 'Error al iniciar sesión', res.data, 'error' );
     }
 }; 

@@ -1,12 +1,16 @@
-import { DOCUMENT, APP, URL, getTemplate, disableSubmit } from '../dev.const.js';
+import { DOCUMENT, APP, URL_API, getTemplate, disableSubmit } from '../dev.const.js';
 import { getHeaders, getCitiesSer, getRegionsSer, getCountriesSer, getCompaniesSer,
     saveContactSer,
     updateContactSer,
-    deleteContactSer, } from './services.js';
+    deleteContactSer,
+    autoComSer,
+    searchSer,
+    getImageSer,
+    saveImageSer } from './services.js';
 
 const container = APP;
-const URL_COM = `${URL}contacts/`;
-let companies = {}, regions = {}, countries = {}, cities = {}; 
+const URL_COM = `${URL_API}contacts/`;
+let companies = {}, regions = {}, countries = {}, cities = {}, allCountries = {}, allCities = {}; 
 let CANALES = 1;
 let dialog;
 
@@ -23,7 +27,10 @@ export const initContacts = async () => {
     slider();
     createchanel( CANALES );
     saveNewBtn( false );
+    initAutoCom();
+    searchBtn();
     setTable( headers );
+    reset();
 };
 
 const addEventNew = () => {
@@ -44,6 +51,8 @@ const getInfoSels = async () => {
                                         await getCitiesSer() ];
     initDic( com, companies, 'company' );
     initDic( reg, regions, 'region' );
+    initDic( count, allCountries );
+    initDic( cit, allCities );
     initDicChild( count, countries, 'region', 'country' );
     initDicChild( cit, cities, 'country', 'city' );
 };
@@ -54,7 +63,9 @@ const initDic = ( data, dic, sel ) => {
             dic[item.id] = item.nombre;
         }
     } );
-    setOptions( dic, sel );
+    if( sel ){
+        setOptions( dic, sel );
+    }
 };
 
 const initDicChild = ( data, dic, parent, sel ) => {
@@ -232,12 +243,15 @@ const acctionsBtns = ( cell, formatterParams, onRendered ) => {
 const contactFormatter = ( cell, formatterParams, onRendered ) => {
     const data = cell._cell.row.data;
     const divCont = DOCUMENT.createElement( 'div' );
-        divCont.classList.add( 'left-align' );
+    divCont.classList.add( 'left-align' );
+    const img = DOCUMENT.createElement( 'img' );
+        img.src = data.image;
+        img.classList.add( 'contact-img' );
     const span = DOCUMENT.createElement( 'span' );
         span.innerText = `${data.nombre} ${data.apellido}`;
     const psmall = DOCUMENT.createElement( 'span' );
         psmall.innerHTML = `<br/><small style="color: #616161"> ${data.email} </small>`;
-        divCont.append( span, psmall );
+        divCont.append( img, span, psmall );
     onRendered( () => {
         cell._cell.element.appendChild( divCont );
     } );
@@ -298,7 +312,6 @@ const setTable = async ( info ) => {
         ajaxSorting: true,
         ajaxURLGenerator: getData,
         ajaxResponse: respData,
-        // layout: "fitDataStretch",
         columns: [
             { formatter:"rowSelection", titleFormatter:"rowSelection", headerSort:false,
                 cellClick:function(e, cell){
@@ -330,10 +343,18 @@ const getData = ( url, config, params ) => {
     return `${url}?skip=${skip}&limit=${limit}&sort=${sort}&way=${way}`;
 };
 
-const respData = ( url, params, response ) => {
+const respData = async ( url, params, response ) => {
+    const data = response.data.contacts;
+    for( let row in data ) {
+        let image;
+        let name = data[row].image ? data[row].image : 'no-image.png';
+        const blob = await getImageSer( name );
+            image = URL.createObjectURL( blob );
+        data[row].image = image;
+    }
     const resp = {
         last_page: response.data.last_page,
-        data: response.data.contacts
+        data
     }
     return resp;
 };
@@ -371,6 +392,10 @@ const updateCotact = async ( id, cell ) => {
         modal = M.Modal.init( temp );
     }
     modal.open();
+    const file = DOCUMENT.querySelector( '.avatar-upload.col.m2.hide' )
+        file.classList.remove( 'hide' );
+        // file.setAttribute( 'info-id', id );
+    setUpload( id, info.image );
     setUpdateCh( canales );
     setUpdateInfo( temp, info );
     
@@ -439,7 +464,7 @@ const setUpdateChData = ( chanels ) => {
             if( sel.id.includes( 'canal' ) ) {
                 sel.value = chanels[i].nombre;
                 sel.M_FormSelect.input.value = chanels[i].nombre;
-            } else {console.log(chanels[i])
+            } else {
                 sel.value = chanels[i].preferencia;
                 sel.M_FormSelect.input.value = chanels[i].preferencia;
             }
@@ -486,6 +511,110 @@ const setChanels = ( entries ) => {
     return chanels;
 };
 
+const initAutoCom = () => {
+    let input = DOCUMENT.getElementById( 'search' );
+        input.onkeyup = (e) => {
+            if( e. keycode === 13 || e.which === 13 ) {
+                buscar( input.value );
+            } else {
+                // autoComplete( input.value, input );
+            }
+        }
+}
+
+const searchBtn = () => {
+    let btn = DOCUMENT.getElementById( 'searchI' );
+        btn.onclick = () => { buscar( DOCUMENT.getElementById( 'search' ).value ); };
+};
+
+const buscar = async ( value ) => {
+    if( !value ) {
+        Swal.fire( 'Advertencia', `Es necesario ingresar un valor`, 'info' );
+        return;
+    }
+    value = searchIsID( value, regions );
+    value = searchIsID( value, allCountries );
+    value = searchIsID( value, allCities );
+    value = searchIsID( value, companies );
+    const resp = await searchSer( value );
+    if( resp.ok ) {
+        if( resp.data.length > 0 ){
+            initTableSearch( resp.data );
+        } else {
+            Swal.fire( 'Advertencia', `Sin resultado al buscar: ${value}`, 'info' );
+        }
+    }
+};
+
+const searchIsID = ( value, dic  ) => {
+    let text = value.toUpperCase();
+    for(let id in dic ){
+        const reg = dic[ id ].toUpperCase();
+        if( text === reg ){
+            value = id + '-ID';
+            return value;
+        }
+    }
+    return value;
+};
+
+const autoComplete = async ( text, input ) => {
+    let list = [], info = [];
+    const response = await autoComSer( text );
+    if( response.ok ) {
+        list = response.data;
+        list.forEach( ( item, i ) => {
+            // const name = i === ? 
+            if( item.length > 0 ) {
+                info.push( item );
+            }
+        })
+        // nombre, apellido, email, cargo, interes, company, canales, city, country, region
+    }
+};
+
+const initTableSearch = ( data ) => {
+    // console.log(data);
+    const table = DOCUMENT.getElementById( 'contactsTable' );
+        table.innerHTML = '';
+    new Tabulator("#contactsTable", {
+        pagination: 'local',
+        paginationSizeSelector: [ 5, 10, 15 ],
+        paginationSize: 5,
+        data,
+        columns: [
+            { formatter:"rowSelection", titleFormatter:"rowSelection", headerSort:false,
+                cellClick:function(e, cell){
+                    cell.getRow().toggleSelect();
+            } },
+            { title:"Contacto", field:"nombre", formatter: contactFormatter, width:"15%" },
+            { title:"País/Región", field:"country.nombre", formatter: countryFormatter, width:"15%" },
+            { title:"Compañia", field:"company.nombre", width:"15%" },
+            { title:"Cargo", field:"cargo", width:"15%" },
+            { title:"Canal preferido", formatter: canalesFormat, width:"20%" },
+            { title:"Interés", field:"interes", formatter: progressFormat, width:"15%" },
+            { title:"Acciones", hozAlign:"center", formatter: acctionsBtns, headerSort:false, width:"15%" }
+        ],
+        rowSelectionChanged: expData,
+    });
+};
+
+const reset = () => {
+    const resetBtn = DOCUMENT.getElementById( 'resetBtn' );
+        resetBtn.onclick = () => { initContacts() };
+};
+
+const setUpload =  async ( id, image  ) => {
+    const file = DOCUMENT.querySelector( '#imageUpload' );
+    const preview = DOCUMENT.getElementById( 'imagePreview' );
+        preview.style.backgroundImage  = `url(${ image })`;
+    file.onchange = async ( e ) => {
+        const form = new FormData();
+            form.append( 'image', file.files[0] );
+        const resp = await saveImageSer( form, id );
+    };
+};
+
 const expData = ( userList ) => {
     // document.getElementById("select-stats").innerHTML = data.length;
     if( userList.length > 0 ){
@@ -496,7 +625,7 @@ const expData = ( userList ) => {
 const message = async ( data, msgok, msgbad ) => {
     if( data.ok ) {
         if( data.data.nombre ){
-            await Swal.fire( 'Exito', `${msgok} ${data.data.nombre}`, 'success' );    
+            await Swal.fire( 'Exito', `${msgok} ${data.data.nombre}`, 'success' );
         } else {
             await Swal.fire( 'Exito', msgok, 'success' );
         }
@@ -505,3 +634,7 @@ const message = async ( data, msgok, msgbad ) => {
         await Swal.fire( 'Error', msgbad , 'error' );
     }
 }
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }

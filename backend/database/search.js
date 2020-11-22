@@ -27,7 +27,40 @@ const findExp = async ( exp ) => {
     }
 };
 
-const findContacts = async ( query, options ) => {
+const findContacts = async ( exp ) => {
+    let id = exp.includes('-ID') ? true : false;
+    const regex = exp.includes('-ID') ? exp.slice( 0, -3 )
+                    : new RegExp( exp, 'i');
+    let contacts;
+    try{
+        if( id ) {
+            contacts =  Contact.find( { $or : [ { company: regex }, { region: regex },
+                                    { country: regex }, { city: regex }
+                                ] } )
+                                .populate( 'company', 'nombre' )
+                                .populate( 'country', 'nombre' )
+                                .populate( 'region', 'nombre' )
+                                .exec();
+        } else {
+            contacts =  Contact.find( { $or : [ { nombre: regex }, { apellido: regex }, { cargo: regex },
+                                                { email: regex }, { apellido: regex }, { cargo: regex },
+                                                { 'canales.nombre': regex }, { 'canales.preferencia': regex }, { direccion: regex },
+                                                { interes: regex }
+                                            ] } )
+                                            .populate( 'company', 'nombre' )
+                                            .populate( 'country', 'nombre' )
+                                            .populate( 'region', 'nombre' )
+                                            .exec();
+        }
+        return contacts;
+    } catch( error ) {
+        console.log( error );
+        return { error: true };
+    }
+};
+
+// find by especific property
+const findParamContacts = async ( query, options ) => {
     const skip = parseInt( options.skip, 10 ),
         limit = parseInt( options.limit, 10 ),
         sort = options.sort,
@@ -50,5 +83,6 @@ const findContacts = async ( query, options ) => {
 
 module.exports = {
     findExp,
-    findContacts
+    findContacts,
+    findParamContacts
 };

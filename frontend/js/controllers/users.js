@@ -1,8 +1,8 @@
-import { DOCUMENT, APP, URL, disableSubmit } from '../dev.const.js';
+import { DOCUMENT, APP, URL_API, disableSubmit } from '../dev.const.js';
 import { getHeaders, saveUserSer, updateUserSer, deleteUserSer } from './services.js';
 
 const container = APP;
-const URL_USER = `${URL}users/`;
+const URL_USER = `${URL_API}users/`;
 
 export const initUsers = async () => {
     const usersTemp = await getTemplate();

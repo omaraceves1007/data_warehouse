@@ -1,8 +1,8 @@
-import { DOCUMENT, APP, URL, getTemplate, disableSubmit } from '../dev.const.js';
+import { DOCUMENT, APP, URL_API, getTemplate, disableSubmit } from '../dev.const.js';
 import { getHeaders, getCitiesSer, saveCompanySer, updateCompanySer, deleteCompanySer } from './services.js';
 
 const container = APP;
-const URL_COM = `${URL}companies/`;
+const URL_COM = `${URL_API}companies/`;
 let CITIES = {};
 let CTABLE = {};
 

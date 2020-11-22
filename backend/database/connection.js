@@ -1,5 +1,6 @@
 const mongoose = require( 'mongoose' );
 const db = process.env.DB_MN;
+const atlas = process.env.DB_ATLAS;
 
 async function connection() {
     try{
@@ -15,6 +16,6 @@ async function connection() {
     }
 }
 
-module.exports = {
+module.exports = { 
     connection
 };
