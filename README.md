@@ -71,6 +71,17 @@ Una vez instalado abrimos una terminal en la carpeta frontend y ejecutamos:
  http-server
 ```
 
+## Datos de login para usuario administrador
+
+_Setiene precargados dos usuarios._
+
+**ADMIN**
+* Usuario: manuel.acev01@gmail.com
+* Password: 123456
+
+**USER**
+* Usuario: dani.her01@gmail.com
+* Password: 123456
 
 ## Autor ✒️
 
